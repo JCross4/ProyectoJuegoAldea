@@ -1,23 +1,10 @@
 package funcion;
 
 public class Cerca extends Estructura{
-
-    @Override
-    public void recibirDaño(int daño) {
-        // reducir vida igual al daño recibido
-        throw new UnsupportedOperationException("Unimplemented method 'recibirDaño'");
+    
+    public Cerca() {
+        super("Cerca Principal", 100, 100);
     }
 
-    @Override
-    public void reparar(int cantidad) {
-        // aumentar vida igual a la cantidad de reparación
-        throw new UnsupportedOperationException("Unimplemented method 'reparar'");
-    }
-
-    @Override
-    public boolean estaDestruida() {
-        // retornar atributo destruida
-        return isDestruida();
-    }
 
 }

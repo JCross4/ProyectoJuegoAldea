@@ -23,8 +23,28 @@ public abstract class Personaje {
     public abstract void realizarAccion();
     public abstract void comer();
     public abstract void descansar();
-    public abstract void recibirDaño(int daño);
-    public abstract boolean estaVivo();
+
+
+    public Personaje(String nombre, int posicion, String tipo) {
+        this.nombre = nombre;
+        this.salud = 100;
+        this.energia = 100;
+        this.vivo = true;
+        this.posicion = posicion;
+        this.tipo = tipo;
+    }
+
+    public void recibirDaño(int daño){
+        salud -= daño;
+        if(salud <= 0){
+            vivo = false;
+            salud = 0;
+        }
+    }
+
+    public boolean estaVivo(){
+        return vivo;
+    }
     
     // Getters y Setters
     public String getNombre() {
@@ -56,6 +76,12 @@ public abstract class Personaje {
     }
     public void setTipo(String tipo) {
         this.tipo = tipo;
+    }
+    public boolean isVivo() {
+        return vivo;
+    }
+    public void setVivo(boolean vivo) {
+        this.vivo = vivo;
     }
 
     

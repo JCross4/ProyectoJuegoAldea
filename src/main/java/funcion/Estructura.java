@@ -16,10 +16,36 @@ public abstract class Estructura {
     private int resistenciaMaxima;
     private boolean destruida;
 
+    
+
+    public Estructura(String nombre, int resistenciaActual, int resistenciaMaxima) {
+        this.nombre = nombre;
+        this.resistenciaActual = resistenciaActual;
+        this.resistenciaMaxima = resistenciaMaxima;
+        this.destruida = false;
+    }
+
     // Métodos abstractos que deben implementar las clases concretas
-    public abstract void recibirDaño(int daño);
-    public abstract void reparar(int cantidad);
-    public abstract boolean estaDestruida();
+    public void recibirDaño(int daño)
+    {
+        resistenciaActual -= daño;
+        if(resistenciaActual <= 0){
+            destruida = true;
+            resistenciaActual = 0;
+        }
+    }
+
+    public void reparar(int cantidad){
+        if(!destruida){
+            resistenciaActual += cantidad;
+            if(resistenciaActual > resistenciaMaxima){
+                resistenciaActual = resistenciaMaxima;
+            }
+        }
+    }
+    public boolean estaDestruida(){
+        return isDestruida();
+    }
 
     // Getters y Setters
     public String getNombre() {

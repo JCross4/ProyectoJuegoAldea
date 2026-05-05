@@ -1,23 +1,14 @@
 package funcion;
 
 public class Parcela extends Estructura {
-
-    @Override
-    public void recibirDaño(int daño) {
-        // reducir vida igual al daño recibido
-        throw new UnsupportedOperationException("Unimplemented method 'recibirDaño'");
+    private String estado; // "vacía", "sembrada", "lista para cosechar"
+    private int ciclosParaCosechar; // Número de ciclos necesarios para que la parcela esté lista para cosechar
+    
+    public Parcela(String nombre) {
+        super(nombre, 50, 50);
+        this.estado = "vacía";
+        this.ciclosParaCosechar = 0;
     }
 
-    @Override
-    public void reparar(int cantidad) {
-        // aumentar vida igual a la cantidad de reparación
-        throw new UnsupportedOperationException("Unimplemented method 'reparar'");
-    }
-
-    @Override
-    public boolean estaDestruida() {
-        // retornar atributo destruida
-        return isDestruida();
-    }
 
 }
