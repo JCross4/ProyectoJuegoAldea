@@ -1,23 +1,12 @@
 package funcion;
 
 public class TorreDefensa extends Estructura{
+    private int dañoAtaque; //15
 
-    @Override
-    public void recibirDaño(int daño) {
-        // reducir vida igual al daño recibido
-        throw new UnsupportedOperationException("Unimplemented method 'recibirDaño'");
+    public TorreDefensa(String nombre) {
+        super(nombre, 60, 60);
+        this.dañoAtaque = 15;
     }
-
-    @Override
-    public void reparar(int cantidad) {
-        // aumentar vida igual a la cantidad de reparación
-        throw new UnsupportedOperationException("Unimplemented method 'reparar'");
-    }
-
-    @Override
-    public boolean estaDestruida() {
-        // retornar atributo destruida
-        return isDestruida();
-    }
-
+    
+    
 }

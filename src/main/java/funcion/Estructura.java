@@ -16,7 +16,6 @@ public abstract class Estructura {
     private int resistenciaMaxima;
     private boolean destruida;
 
-    
 
     public Estructura(String nombre, int resistenciaActual, int resistenciaMaxima) {
         this.nombre = nombre;
@@ -43,6 +42,7 @@ public abstract class Estructura {
             }
         }
     }
+    
     public boolean estaDestruida(){
         return isDestruida();
     }
@@ -71,6 +71,12 @@ public abstract class Estructura {
     }
     public void setDestruida(boolean destruida) {
         this.destruida = destruida;
+    }
+
+    @Override
+    public String toString() {
+        return "Estructura [nombre=" + nombre + ", resistenciaActual=" + resistenciaActual + ", resistenciaMaxima="
+                + resistenciaMaxima + ", destruida=" + destruida + "]";
     }
 
     

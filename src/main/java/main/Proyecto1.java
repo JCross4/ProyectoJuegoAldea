@@ -4,6 +4,8 @@
 
 package main;
 
+import funcion.Aldea;
+
 /**
  *
  * @author 23jic
@@ -15,5 +17,7 @@ public class Proyecto1 {
 
     public static void main(String[] args) {
         System.out.println("Hello Worlddd!");
+        Aldea aldea = new Aldea();
+        aldea.iniciarSimulacion();
     }
 }

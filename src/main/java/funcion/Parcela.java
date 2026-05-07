@@ -10,5 +10,10 @@ public class Parcela extends Estructura {
         this.ciclosParaCosechar = 0;
     }
 
-
+    public void cultivar() {
+        if (estado.equals("vacía")) {
+            estado = "sembrada";
+            ciclosParaCosechar = 3; // Ejemplo: tarda 3 ciclos en estar lista para cosechar
+        }
+    }
 }

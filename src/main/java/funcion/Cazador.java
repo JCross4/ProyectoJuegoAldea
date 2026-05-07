@@ -2,6 +2,11 @@ package funcion;
 
 public class Cazador extends Personaje {
 
+    public Cazador(String nombre, int posicion) {
+        super(nombre, posicion, "cazador");
+        //TODO Auto-generated constructor stub
+    }
+
     @Override
     public void mover() {
         // TODO desplazar elemento y cambiar animación a "caminando"
@@ -26,16 +31,5 @@ public class Cazador extends Personaje {
         throw new UnsupportedOperationException("Unimplemented method 'descansar'");
     }
 
-    @Override
-    public void recibirDaño(int daño) {
-        // TODO reduce vida actual segun daño recibido
-        throw new UnsupportedOperationException("Unimplemented method 'recibirDaño'");
-    }
-
-    @Override
-    public boolean estaVivo() {
-        // TODO retorna boolean vivo
-        throw new UnsupportedOperationException("Unimplemented method 'estaVivo'");
-    }
-
+  
 }

@@ -83,6 +83,12 @@ public abstract class Personaje {
     public void setVivo(boolean vivo) {
         this.vivo = vivo;
     }
+    
+    @Override
+    public String toString() {
+        return "Personaje [nombre=" + nombre + ", salud=" + salud + ", energia=" + energia + ", vivo=" + vivo
+                + ", posicion=" + posicion + ", tipo=" + tipo + "]";
+    }
 
     
 }
