@@ -3,37 +3,41 @@ package funcion;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import gui.VentanaPrincipal;
+
 public class Aldea {
     //Contiene personajes, estructuras, recursos y animales
     //Se encarga de gestionar los ciclos y el orden de las acciones
-    
-    private int cicloActual;
-    private int maxCiclos;  //30
-    private int agricultoresIniciales; //1 para todos
-    private int cazadoresIniciales;
-    private int constructoresIniciales;
-    private int guardianesIniciales;
-    private int leñadoresIniciales;
-    private int torresIniciales; //1
-    private int parcelasCultivoIniciales; //2
-    private int comidaVegetalInicial; //20
-    private int comidaAnimalInicial; //10
-    private int maderaInicial; //40
-    private int arbolesIniciales; //25
 
+    //Valores iniciales y constantes
+    final int MAX_CICLOS = 30;
+    final int MAX_HABITANTES = 12;
+    final int AGRICULTORES_INICIALES = 1;
+    final int CAZADORES_INICIALES = 1;
+    final int CONSTRUCTORES_INICIALES = 1;
+    final int GUARDIANES_INICIALES = 1;
+    final int LEÑADORES_INICIALES = 1;
+    final int TORRES_INICIALES = 1;
+    final int PARCELAS_CULTIVO_INICIALES = 2;
+    final int COMIDA_VEGETAL_INICIAL = 20;
+    final int COMIDA_ANIMAL_INICIAL = 10;
+    final int MADERA_INICIAL = 40;
+    final int ARBOLES_INICIALES = 25;
 
     //Condiciones de victoria al final del maximo de ciclos
-    private int minPersonajesVivosVictoria; //3
-    private int minResistenciaCercaVictoria; //1
-    private int minComidaTotal; //20
-    private int minTorresEnPie; //1
+    final int minPersonajesVivosVictoria = 3; //3
+    final int minResistenciaCercaVictoria = 1; //1
+    final int minComidaTotal = 20; //20
+    final int minTorresEnPie = 1; //1
     //Condiciones de derrota al final de cada ciclo
-    private int minPersonajesVivosDerrota; //0
-    private int minResistenciaCercaDerrota; //0
-    private int minTorresEnPieDerrota; //0
-    private int minComidaDerrota; //0
-    private int maxTurnosMinComida; //3
+    final int minPersonajesVivosDerrota = 0; //0
+    final int minResistenciaCercaDerrota = 0; //0
+    final int minTorresEnPieDerrota = 0; //0
+    final int minComidaDerrota = 0; //0
+    final int maxTurnosMinComida = 3; //3
 
+    //Atributos de la aldea
+    private int cicloActual;
     private String nombre;
     private int maderaDisponible;
     private int comidaVegetalDisponible;
@@ -44,24 +48,14 @@ public class Aldea {
     private ArrayList<Animal> animalesActivos;
     private ArrayList<Parcela> parcelasCultivo;
     private int arbolesDisponibles;
+    private int turnosSinComida = 0;
 
-
+    private VentanaPrincipal ventana;
 
     
     public Aldea() {
-        this.maxCiclos = 30;
-        this.agricultoresIniciales = 1;
-        this.cazadoresIniciales = 1;
-        this.constructoresIniciales = 1;
-        this.guardianesIniciales = 1;
-        this.leñadoresIniciales = 1;
-        this.torresIniciales = 1;
-        this.parcelasCultivoIniciales = 2;
-        this.comidaVegetalInicial = 20;
-        this.comidaAnimalInicial = 10;
-        this.maderaInicial = 40;
-        this.arbolesIniciales = 25;
-        this.nombre = "Aldea";
+        ventana = new VentanaPrincipal(this);
+        nombre = "Aldea";
         personajes = new ArrayList<Personaje>();
         torres = new ArrayList<TorreDefensa>();
         animalesActivos = new ArrayList<Animal>();
@@ -87,19 +81,19 @@ public class Aldea {
     }
 
     public void crearPersonajesIniciales() {
-        for (int i = 0; i < agricultoresIniciales; i++) {
+        for (int i = 0; i < AGRICULTORES_INICIALES; i++) {
             personajes.add(crearPersonaje("agricultor"));
         }
-        for (int i = 0; i < cazadoresIniciales; i++) {
+        for (int i = 0; i < CAZADORES_INICIALES; i++) {
             personajes.add(crearPersonaje("cazador"));
         }
-        for (int i = 0; i < constructoresIniciales; i++) {
+        for (int i = 0; i < CONSTRUCTORES_INICIALES; i++) {
             personajes.add(crearPersonaje("constructor"));
         }
-        for (int i = 0; i < guardianesIniciales; i++) {
+        for (int i = 0; i < GUARDIANES_INICIALES; i++) {
             personajes.add(crearPersonaje("guardián"));
         }
-        for (int i = 0; i < leñadoresIniciales; i++) {
+        for (int i = 0; i < LEÑADORES_INICIALES; i++) {
             personajes.add(crearPersonaje("leñador"));
         }
     }
@@ -114,46 +108,98 @@ public class Aldea {
         return new Parcela("Parcela de Cultivo" + (parcelasCultivo.size() + 1));
     }
 
+    public void crearAnimal(String tipo){
+        //TODO Implementar lógica para crear un nuevo animal (lobo, oso o jabalí) y agregarlo a la lista de animales activos
+        switch (tipo.toLowerCase()) {
+            case "lobo":
+                animalesActivos.add(new Lobo("Lobo" + (animalesActivos.size() + 1)));
+                break;
+            case "oso":
+                animalesActivos.add(new Oso("Oso" + (animalesActivos.size() + 1)));
+                break;
+            case "jabali":
+                animalesActivos.add(new Jabali("Jabali" + (animalesActivos.size() + 1)));
+                break;
+            default:
+                throw new IllegalArgumentException("Tipo de animal no válido: " + tipo);
+        }
+    }
+
+    public void verificarCrearAnimal(){
+        if (cicloActual % 2 == 0) { // 50% de probabilidad de crear un lobo
+            crearAnimal("lobo");
+        }
+        if (cicloActual % 3 == 0) { // 33% de probabilidad de crear un jabalí
+            crearAnimal("jabali");
+        }
+        if (cicloActual % 5 == 0) { // 20% de probabilidad de crear un oso
+            crearAnimal("oso");
+        }
+    }
+
     public void iniciarSimulacion() {
-        cicloActual = 0;
+        cicloActual = 1;
         //Crear personajes, estructuras, recursos y animales iniciales
-        Cerca cercaPrincipal = new Cerca();
+        cercaPrincipal = new Cerca();
         //Crear personajes segun los valores iniciales y agregarlos a la lista de personajes
         
         crearPersonajesIniciales();
         //Crear torres de defensa segun los valores iniciales y agregarlos a la lista de torres
-        for (int i = 0; i < torresIniciales; i++) {
+        for (int i = 0; i < TORRES_INICIALES; i++) {
             torres.add(crearTorreDefensa());
         }
-        arbolesDisponibles = arbolesIniciales;
-        maderaDisponible = maderaInicial;
-        comidaVegetalDisponible = comidaVegetalInicial;
-        comidaAnimalDisponible = comidaAnimalInicial;
-        for (int i = 0; i < parcelasCultivoIniciales; i++) {
+        arbolesDisponibles = ARBOLES_INICIALES;
+        maderaDisponible = MADERA_INICIAL;
+        comidaVegetalDisponible = COMIDA_VEGETAL_INICIAL;
+        comidaAnimalDisponible = COMIDA_ANIMAL_INICIAL;
+        for (int i = 0; i < PARCELAS_CULTIVO_INICIALES; i++) {
             parcelasCultivo.add(crearParcelaCultivo());
         }
-
+        
 
         Scanner scanner = new Scanner(System.in);
         //Ciclo principal de la simulación
-        while (cicloActual < maxCiclos) {
+        while (cicloActual <= MAX_CICLOS) {
             //TODO Realizar acciones segun el orden determinado
             System.out.println("Ciclo " + cicloActual);
             System.out.println("Personajes: " + personajes);
             System.out.println("Torres: " + torres);
+            System.out.println("Animales Activos: " + animalesActivos);
+            System.out.println("Parcelas de Cultivo: " + parcelasCultivo);
+            verificarCrearAnimal();
+            if(verificarCondicionesDerrota()) {
+                System.out.println("¡Derrota! La aldea ha caído.");
+                break;
+            }
             scanner.nextLine();
             cicloActual++;
         }
+        if (verificarCondicionesVictoria()) {
+            System.out.println("¡Victoria! La aldea ha resistido.");
+        }
+        scanner.close();
     }
 
     private boolean verificarCondicionesVictoria() {
         //TODO Verificar condiciones de victoria al final del maximo de ciclos
-        return false;
+        return (personajes.size() >= minPersonajesVivosVictoria &&
+                cercaPrincipal.getResistenciaActual() >= minResistenciaCercaVictoria &&
+                (comidaVegetalDisponible + comidaAnimalDisponible) >= minComidaTotal &&
+                torres.size() >= minTorresEnPie);
     }
 
     private boolean verificarCondicionesDerrota() {
         //TODO Verificar condiciones de derrota al final de cada ciclo
-        return false;
+        if ((comidaVegetalDisponible + comidaAnimalDisponible) <= minComidaDerrota) {
+            turnosSinComida++;
+            System.out.println("¡Cuidado! La aldea no tiene comida disponible. Al llegar a  " + maxTurnosMinComida + " perderá la partida.\nTurnos sin comida: " + turnosSinComida);
+        } else {
+            turnosSinComida = 0; // Reiniciar el contador si hay comida disponible
+        }
+        return (personajes.size() <= minPersonajesVivosDerrota ||
+                cercaPrincipal.getResistenciaActual() <= minResistenciaCercaDerrota &&
+                torres.size() <= minTorresEnPieDerrota  ||
+                turnosSinComida >= maxTurnosMinComida);
     }
 
     public boolean verificarCondicionesAgregarPersonaje(){
@@ -164,7 +210,22 @@ public class Aldea {
         tiene la cerca con resistencia mayor a 50,  
         y la cantidad total de habitantes vivos es menor que 12
          */
-        return true;
+        return ((comidaVegetalDisponible + comidaAnimalDisponible) >= 30 &&
+                maderaDisponible >= 20 &&
+                torres.size() >= 1 &&
+                cercaPrincipal.getResistenciaActual() > 50 &&
+                personajes.size() < MAX_HABITANTES);
     }
 
+    public VentanaPrincipal getVentana() {
+        return ventana;
+    }
+
+    public void setVentana(VentanaPrincipal ventana) {
+        this.ventana = ventana;
+    }
+
+
+
+    
 }

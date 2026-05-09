@@ -2,22 +2,16 @@ package funcion;
 
 public class Lobo extends Animal    {
 
+
+    
+    public Lobo(String nombre) {
+        super(nombre, "Lobo", 40, 10);
+    }
+
     @Override
     public void atacar() {
         // TODO realiza ataque específico y cambia animación a "atacando"
         throw new UnsupportedOperationException("Unimplemented method 'atacar'");
-    }
-
-    @Override
-    public void recibirDaño(int daño) {
-        // TODO reduce vida actual igual a daño recibido
-        throw new UnsupportedOperationException("Unimplemented method 'recibirDaño'");
-    }
-
-    @Override
-    public boolean estaVivo() {
-        // TODO retorna boolean vivo
-        throw new UnsupportedOperationException("Unimplemented method 'estaVivo'");
     }
 
 }

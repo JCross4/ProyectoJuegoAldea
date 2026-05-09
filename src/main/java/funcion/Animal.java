@@ -11,15 +11,37 @@ package funcion;
 public abstract class Animal {
 
     // Atributos comunes a todos los animales
+    private String nombre;
     private String tipo;
     private int vida;
     private int fuerzaAtaque;
     private boolean vivo;
 
+
+
+    
+    public Animal(String nombre, String tipo, int vida, int fuerzaAtaque) {
+        this.nombre = nombre;
+        this.tipo = tipo;
+        this.vida = vida;
+        this.fuerzaAtaque = fuerzaAtaque;
+        this.vivo = true;
+    }
+
     // Métodos abstractos que deben implementar las clases concretas
     public abstract void atacar();
-    public abstract void recibirDaño(int daño);
-    public abstract boolean estaVivo();
+    
+    public void recibirDaño(int daño){
+        vida -= daño;
+        if (vida <= 0) {
+            vivo = false;
+            vida = 0;
+        }
+    }
+
+    public boolean estaVivo(){
+        return vivo;
+    }
 
     // Getters y Setters
     public String getTipo() {
@@ -45,6 +67,11 @@ public abstract class Animal {
     }
     public void setVivo(boolean vivo) {
         this.vivo = vivo;
+    }
+
+    @Override
+    public String toString() {
+        return "Animal [tipo=" + tipo + ", vida=" + vida + ", fuerzaAtaque=" + fuerzaAtaque + ", vivo=" + vivo + "]";
     }
     
 
