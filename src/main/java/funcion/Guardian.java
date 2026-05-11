@@ -2,8 +2,8 @@ package funcion;
 
 public class Guardian extends Personaje {
 
-    public Guardian(String nombre, int posicion) {
-        super(nombre, posicion, "guardian");
+    public Guardian(String nombre, int posicion, Aldea aldea) {
+        super(nombre, posicion, "guardian", aldea);
         //TODO Auto-generated constructor stub
     }
 
@@ -29,6 +29,12 @@ public class Guardian extends Personaje {
     public void descansar() {
         // TODO recupera energia y cambia animación a "descansando"
         throw new UnsupportedOperationException("Unimplemented method 'descansar'");
+    }
+
+    @Override
+    public void determinarObjetivo() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'determinarObjetivo'");
     }
 
 

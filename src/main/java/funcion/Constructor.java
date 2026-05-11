@@ -2,8 +2,8 @@ package funcion;
 
 public class Constructor extends Personaje {
 
-    public Constructor(String nombre, int posicion) {
-        super(nombre, posicion, "constructor");
+    public Constructor(String nombre, int posicion, Aldea aldea) {
+        super(nombre, posicion, "constructor", aldea);
         //TODO Auto-generated constructor stub
     }
 
@@ -29,6 +29,14 @@ public class Constructor extends Personaje {
     public void descansar() {
         // TODO recupera energia y cambia animación a "descansando"
         throw new UnsupportedOperationException("Unimplemented method 'descansar'");
+    }
+
+    @Override
+    public void determinarObjetivo() {
+        // TODO Auto-generated method stub
+        getAldea().obtenerTorreCercana(this);
+        System.out.println("Constructor " + getNombre() + " determina objetivo: " + getObjetivo());
+        throw new UnsupportedOperationException("Unimplemented method 'determinarObjetivo'");
     }
 
 

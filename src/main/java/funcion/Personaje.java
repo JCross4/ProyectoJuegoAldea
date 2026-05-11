@@ -4,6 +4,9 @@
  */
 package funcion;
 
+import javax.swing.JLabel;
+import java.awt.Point;
+
 /**
  *
  * @author 23jic
@@ -14,8 +17,10 @@ public abstract class Personaje {
     private int salud;
     private int energia;
     private boolean vivo;
-    private int posicion;
     private String tipo;
+    private javax.swing.JLabel labelGUI;
+    private Aldea aldea; // Referencia a la aldea para interactuar con otros personajes y el entorno
+    private Point objetivo = new Point(0,0); // Posición objetivo para moverse
 
 
     // Métodos abstractos que deben implementar las clases concretas
@@ -23,14 +28,15 @@ public abstract class Personaje {
     public abstract void realizarAccion();
     public abstract void comer();
     public abstract void descansar();
+    public abstract void determinarObjetivo();
 
 
-    public Personaje(String nombre, int posicion, String tipo) {
+    public Personaje(String nombre, String tipo, Aldea aldea) {
         this.nombre = nombre;
         this.salud = 100;
         this.energia = 100;
         this.vivo = true;
-        this.posicion = posicion;
+        this.aldea = aldea;
         this.tipo = tipo;
     }
 
@@ -65,12 +71,6 @@ public abstract class Personaje {
     public void setEnergia(int energia) {
         this.energia = energia;
     }
-    public int getPosicion() {
-        return posicion;
-    }
-    public void setPosicion(int posicion) {
-        this.posicion = posicion;
-    }
     public String getTipo() {
         return tipo;
     }
@@ -83,12 +83,31 @@ public abstract class Personaje {
     public void setVivo(boolean vivo) {
         this.vivo = vivo;
     }
-    
-    @Override
-    public String toString() {
-        return "Personaje [nombre=" + nombre + ", salud=" + salud + ", energia=" + energia + ", vivo=" + vivo
-                + ", posicion=" + posicion + ", tipo=" + tipo + "]";
+
+    public JLabel getLabelGUI() {
+        return labelGUI;
     }
 
+    public void setLabelGUI(JLabel labelGUI) {
+        this.labelGUI = labelGUI;
+    }
+    
+    public Point getObjetivo() {
+        return objetivo;
+    }
+    public void setObjetivo(Point objetivo) {
+        this.objetivo = objetivo;
+    }
+    public Aldea getAldea() {
+        return aldea;
+    }
+    public void setAldea(Aldea aldea) {
+        this.aldea = aldea;
+    }
+@Override
+    public String toString() {
+        return "Personaje [nombre=" + nombre + ", salud=" + salud + ", energia=" + energia + ", vivo=" + vivo
+                + ", tipo=" + tipo + "]";
+    }
     
 }

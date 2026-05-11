@@ -15,6 +15,7 @@ public abstract class Estructura {
     private int resistenciaActual;
     private int resistenciaMaxima;
     private boolean destruida;
+    private javax.swing.JLabel labelGUI;
 
 
     public Estructura(String nombre, int resistenciaActual, int resistenciaMaxima) {
@@ -77,6 +78,14 @@ public abstract class Estructura {
     public String toString() {
         return "Estructura [nombre=" + nombre + ", resistenciaActual=" + resistenciaActual + ", resistenciaMaxima="
                 + resistenciaMaxima + ", destruida=" + destruida + "]";
+    }
+
+    public javax.swing.JLabel getLabelGUI() {
+        return labelGUI;
+    }
+
+    public void setLabelGUI(javax.swing.JLabel labelGUI) {
+        this.labelGUI = labelGUI;
     }
 
     

@@ -4,6 +4,8 @@
  */
 package funcion;
 
+import java.awt.Point;
+
 /**
  *
  * @author 23jic
@@ -16,6 +18,9 @@ public abstract class Animal {
     private int vida;
     private int fuerzaAtaque;
     private boolean vivo;
+    private javax.swing.JLabel labelGUI;
+    private Aldea aldea; // Referencia a la aldea para interactuar con otros personajes y el entorno
+    private Point objetivo = new Point(0,0); // Posición objetivo para moverse
 
 
 
@@ -72,6 +77,30 @@ public abstract class Animal {
     @Override
     public String toString() {
         return "Animal [tipo=" + tipo + ", vida=" + vida + ", fuerzaAtaque=" + fuerzaAtaque + ", vivo=" + vivo + "]";
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public javax.swing.JLabel getLabelGUI() {
+        return labelGUI;
+    }
+
+    public void setLabelGUI(javax.swing.JLabel labelGUI) {
+        this.labelGUI = labelGUI;
+    }
+
+    public Point getObjetivo() {
+        return objetivo;
+    }
+
+    public void setObjetivo(Point objetivo) {
+        this.objetivo = objetivo;
     }
     
 

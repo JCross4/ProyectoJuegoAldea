@@ -2,7 +2,7 @@ package funcion;
 
 import java.util.ArrayList;
 import java.util.Scanner;
-
+import java.awt.Point;
 import gui.VentanaPrincipal;
 
 public class Aldea {
@@ -49,6 +49,7 @@ public class Aldea {
     private ArrayList<Parcela> parcelasCultivo;
     private int arbolesDisponibles;
     private int turnosSinComida = 0;
+    private ArrayList<ThreadMovimiento> hilosMovimiento = new ArrayList<ThreadMovimiento>();
 
     private VentanaPrincipal ventana;
 
@@ -66,15 +67,15 @@ public class Aldea {
         //TODO Implementar lógica para crear un nuevo personaje
         switch (tipo.toLowerCase()) {
             case "agricultor":
-                return new Agricultor("Agricultor" + (personajes.size() + 1), 0);
+                return new Agricultor("Agricultor" + (personajes.size() + 1), 0, this);
             case "cazador":
-                return new Cazador("Cazador" + (personajes.size() + 1), 0);
+                return new Cazador("Cazador" + (personajes.size() + 1), 0, this);
             case "constructor":
-                return new Constructor("Constructor" + (personajes.size() + 1), 0);
+                return new Constructor("Constructor" + (personajes.size() + 1), 0, this);
             case "guardián":
-                return new Guardian("Guardián" + (personajes.size() + 1), 0);
+                return new Guardian("Guardián" + (personajes.size() + 1), 0, this);
             case "leñador":
-                return new Lenador("Leñador" + (personajes.size() + 1), 0);
+                return new Lenador("Leñador" + (personajes.size() + 1), 0, this);
             default:
                 throw new IllegalArgumentException("Tipo de personaje no válido: " + tipo);
         }
@@ -82,19 +83,29 @@ public class Aldea {
 
     public void crearPersonajesIniciales() {
         for (int i = 0; i < AGRICULTORES_INICIALES; i++) {
-            personajes.add(crearPersonaje("agricultor"));
+            Personaje nuevoPersonaje = crearPersonaje("agricultor");
+            personajes.add(nuevoPersonaje);
+            hilosMovimiento.add(new ThreadMovimiento(nuevoPersonaje));
         }
         for (int i = 0; i < CAZADORES_INICIALES; i++) {
-            personajes.add(crearPersonaje("cazador"));
+            Personaje nuevoPersonaje = crearPersonaje("cazador");
+            personajes.add(nuevoPersonaje);
+            hilosMovimiento.add(new ThreadMovimiento(nuevoPersonaje));
         }
         for (int i = 0; i < CONSTRUCTORES_INICIALES; i++) {
-            personajes.add(crearPersonaje("constructor"));
+            Personaje nuevoPersonaje = crearPersonaje("constructor");
+            personajes.add(nuevoPersonaje);
+            hilosMovimiento.add(new ThreadMovimiento(nuevoPersonaje));
         }
         for (int i = 0; i < GUARDIANES_INICIALES; i++) {
-            personajes.add(crearPersonaje("guardián"));
+            Personaje nuevoPersonaje = crearPersonaje("guardián");
+            personajes.add(nuevoPersonaje);
+            hilosMovimiento.add(new ThreadMovimiento(nuevoPersonaje));
         }
         for (int i = 0; i < LEÑADORES_INICIALES; i++) {
-            personajes.add(crearPersonaje("leñador"));
+            Personaje nuevoPersonaje = crearPersonaje("leñador");
+            personajes.add(nuevoPersonaje);
+            hilosMovimiento.add(new ThreadMovimiento(nuevoPersonaje));
         }
     }
 
@@ -134,6 +145,57 @@ public class Aldea {
         }
         if (cicloActual % 5 == 0) { // 20% de probabilidad de crear un oso
             crearAnimal("oso");
+        }
+    }
+
+    public void obtenerTorreCercana(Personaje personaje) {
+        //TODO Implementar lógica para determinar el objetivo del personaje según su tipo y la situación actual de la aldea
+        //Ejemplo: un agricultor podría dirigirse a una parcela de cultivo, un cazador a un animal activo, etc.
+        int x = personaje.getLabelGUI().getLocation().x;
+        int y = personaje.getLabelGUI().getLocation().y;
+        int xObj = 9999;
+        int yObj = 9999;
+        for (TorreDefensa torre : torres) {
+            int absx = Math.abs(x - torre.getLabelGUI().getLocation().x);
+            int absy = Math.abs(y - torre.getLabelGUI().getLocation().y);
+            int objx = Math.abs(x - xObj);
+            int objy = Math.abs(y - yObj);
+            if ((absx + absy) < (objx + objy)) {
+                xObj = torre.getLabelGUI().getLocation().x;
+                yObj = torre.getLabelGUI().getLocation().y;
+            }
+        }
+        personaje.setObjetivo(new Point(xObj, yObj));
+    }
+
+    public void obtenerPersonajeCercano(Animal animal){
+        //TODO Implementar lógica para determinar el objetivo del animal según la situación actual de la aldea
+        //Ejemplo: un lobo podría dirigirse al personaje más cercano, un oso a la torre de defensa más cercana, etc.
+        int x = animal.getLabelGUI().getLocation().x;
+        int y = animal.getLabelGUI().getLocation().y;
+        int xObj = 9999;
+        int yObj = 9999;
+        for (Personaje personaje : personajes) {
+            int absx = Math.abs(x - personaje.getLabelGUI().getLocation().x);
+            int absy = Math.abs(y - personaje.getLabelGUI().getLocation().y);
+            int objx = Math.abs(x - xObj);
+            int objy = Math.abs(y - yObj);
+            if ((absx + absy) < (objx + objy)) {
+                xObj = personaje.getLabelGUI().getLocation().x;
+                yObj = personaje.getLabelGUI().getLocation().y;
+            }
+        }
+        animal.setObjetivo(new Point(xObj, yObj));
+    }
+
+    public void iniciarThreadsMovimiento() {
+        for (ThreadMovimiento thread : hilosMovimiento) {
+            thread.start();
+        }
+    }
+    public void detenerThreadsMovimiento() {
+        for (ThreadMovimiento thread : hilosMovimiento) {
+            thread.stopThread();
         }
     }
 
@@ -300,6 +362,13 @@ public class Aldea {
 
     public void setArbolesDisponibles(int arbolesDisponibles) {
         this.arbolesDisponibles = arbolesDisponibles;
+    }
+    public int getTurnosSinComida() {
+        return turnosSinComida;
+    }
+
+    public void setTurnosSinComida(int turnosSinComida) {
+        this.turnosSinComida = turnosSinComida;
     }
 
 
