@@ -44,6 +44,7 @@ public class Aldea {
     final int maxTurnosMinComida = 3; //3
 
     //Atributos de la aldea
+    private boolean personajesListos;
     private int cicloActual;
     private String nombre;
     private int maderaDisponible;
@@ -58,6 +59,7 @@ public class Aldea {
     private ArrayList<JLabel> labelArboles = new ArrayList<JLabel>();
     private int turnosSinComida = 0;
     private ArrayList<ThreadMovimiento> hilosMovimiento = new ArrayList<ThreadMovimiento>();
+    private ArrayList<ThreadMovimientoAnimal> hilosMovimientoAnimal = new ArrayList<ThreadMovimientoAnimal>();
 
     private VentanaPrincipal ventana;
 
@@ -102,6 +104,12 @@ public class Aldea {
         ventana.eliminarLabel(labelArbol);
     }
 
+    public void eliminarAnimal(Animal animal){
+        animalesActivos.remove(animal);
+        ventana.eliminarLabel(animal.getLabelGUI());
+        detenerThreadMovimientoAnimal(animal);
+    }
+
     public void detenerThreadMovimiento(Personaje personaje) {
         for (ThreadMovimiento thread : hilosMovimiento) {
             if (thread.getPersonaje() == personaje) {
@@ -110,6 +118,15 @@ public class Aldea {
             }
         }
     }
+
+    public void detenerThreadMovimientoAnimal(Animal animal) {
+        for (ThreadMovimientoAnimal thread : hilosMovimientoAnimal) {
+            if (thread.getAnimal() == animal) {
+                thread.stopThread();
+                break;
+            }
+        }
+     }
 
     public void actualizarLabelsParcelas(){
         for (Parcela parcela : getParcelasCultivo()){
@@ -147,7 +164,7 @@ public class Aldea {
 
     public TorreDefensa crearTorreDefensa() {
         //TODO Implementar lógica para crear una nueva torre de defensa
-        return new TorreDefensa("Torre de Defensa" + (torres.size() + 1));
+        return new TorreDefensa("Torre de Defensa" + (torres.size() + 1), this);
     }
 
     public Parcela crearParcelaCultivo() {
@@ -159,11 +176,11 @@ public class Aldea {
         //TODO Implementar lógica para crear un nuevo animal (lobo, oso o jabalí) y agregarlo a la lista de animales activos
         switch (tipo.toLowerCase()) {
             case "lobo":
-                return (new Lobo("Lobo" + (animalesActivos.size() + 1)));
+                return (new Lobo("Lobo" + (animalesActivos.size() + 1), this));
             case "oso":
-                return (new Oso("Oso" + (animalesActivos.size() + 1)));
+                return (new Oso("Oso" + (animalesActivos.size() + 1), this));
             case "jabali":
-                return(new Jabali("Jabali" + (animalesActivos.size() + 1)));
+                return(new Jabali("Jabali" + (animalesActivos.size() + 1), this));
             default:
                 throw new IllegalArgumentException("Tipo de animal no válido: " + tipo);
         }
@@ -172,18 +189,27 @@ public class Aldea {
     public void verificarCrearAnimal(){
         if (cicloActual % 2 == 0) { // 50% de probabilidad de crear un lobo
             Animal nuevoAnimal = crearAnimal("lobo");
+            ThreadMovimientoAnimal threadAnimal = new ThreadMovimientoAnimal(nuevoAnimal);
+            hilosMovimientoAnimal.add(threadAnimal);
             animalesActivos.add(nuevoAnimal);
             ventana.crearLabelAnimal(nuevoAnimal);
+            threadAnimal.start();
         }
         if (cicloActual % 3 == 0) { // 33% de probabilidad de crear un jabalí
             Animal nuevoAnimal = crearAnimal("jabali");
+            ThreadMovimientoAnimal threadAnimal = new ThreadMovimientoAnimal(nuevoAnimal);
+            hilosMovimientoAnimal.add(threadAnimal);
             animalesActivos.add(nuevoAnimal);
             ventana.crearLabelAnimal(nuevoAnimal);
+            threadAnimal.start();
         }
         if (cicloActual % 5 == 0) { // 20% de probabilidad de crear un oso
             Animal nuevoAnimal =    crearAnimal("oso");
+            ThreadMovimientoAnimal threadAnimal = new ThreadMovimientoAnimal(nuevoAnimal);
+            hilosMovimientoAnimal.add(threadAnimal);
             animalesActivos.add(nuevoAnimal);
             ventana.crearLabelAnimal(nuevoAnimal);
+            threadAnimal.start();
         }
     }
 
@@ -207,6 +233,18 @@ public class Aldea {
         return new Point(xObj, yObj);
     }
 
+    public TorreDefensa obtenerTorreMenosVida() {
+        TorreDefensa torreMenosVida = null;
+        int vidaMinima = Integer.MAX_VALUE;
+        for (TorreDefensa torre : torres) {
+            if (torre.getResistenciaActual() < vidaMinima && !torre.estaDestruida()) {
+                vidaMinima = torre.getResistenciaActual();
+                torreMenosVida = torre;
+            }
+        }
+        return torreMenosVida;
+    }
+
     public void obtenerPersonajeCercano(Animal animal){
         //TODO Implementar lógica para determinar el objetivo del animal según la situación actual de la aldea
         //Ejemplo: un lobo podría dirigirse al personaje más cercano, un oso a la torre de defensa más cercana, etc.
@@ -225,6 +263,18 @@ public class Aldea {
             }
         }
         animal.setObjetivo(new Point(xObj, yObj));
+    }
+
+    public Personaje obtenerPersonajeMenosVida() {
+        Personaje personajeMenosVida = null;
+        int vidaMinima = Integer.MAX_VALUE;
+        for (Personaje personaje : personajes) {
+            if (personaje.getSalud() < vidaMinima && personaje.estaVivo()) {
+                vidaMinima = personaje.getSalud();
+                personajeMenosVida = personaje;
+            }
+        }
+        return personajeMenosVida;
     }
 
     public Animal obtenerAnimalCercano(Point punto){
@@ -267,6 +317,21 @@ public class Aldea {
             }
         }
         return animalMasFuerte;
+    }
+
+    public Animal obtenerAnimalMasVida(){
+        if (animalesActivos.size() == 0) {
+            return null; // Podría ser una posición específica para descansar o alguna otra lógica
+        }
+        Animal animalMasVida = null;
+        int maxVida = -1;
+        for (Animal animal : animalesActivos) {
+            if (animal.getVida() > maxVida) {
+                maxVida = animal.getFuerzaAtaque();
+                animalMasVida = animal;
+            }
+        }
+        return animalMasVida;
     }
 
     public Point obtenerArbolCercano(Lenador lenador){
@@ -312,6 +377,19 @@ public class Aldea {
         return null;
     }
 
+    public boolean checkPersonajesListos(){
+        while (!isPersonajesListos()){
+        for (ThreadMovimiento thread : hilosMovimiento){
+            if (!thread.isTurnoFinalizado()) {
+                setPersonajesListos(false);
+                break;
+            }
+            setPersonajesListos(true);
+        }
+        }
+        return true;
+    }
+
     public void iniciarThreadsMovimiento() {
         for (ThreadMovimiento thread : hilosMovimiento) {
             thread.start();
@@ -333,7 +411,7 @@ public class Aldea {
     public void iniciarSimulacion() {
         cicloActual = 0;
         //Crear personajes, estructuras, recursos y animales iniciales
-        cercaPrincipal = new Cerca();
+        cercaPrincipal = new Cerca(this);
         //Crear personajes segun los valores iniciales y agregarlos a la lista de personajes
         ventana.deshabilitarAgregarPersonaje();
         crearPersonajesIniciales();
@@ -369,8 +447,12 @@ public class Aldea {
         //Orden de acciones
         /*Personajes
         Constructores. - Agricultores. - Leñadores. - Cazadores. - Guardiánes
+        
+        --Finalizan los personajes
         Actualizar cultivos sembrados.  
         Generar animales.
+
+        --
         Disparos de torres o personajes de defensa.  
         Ataque de animales sobrevivientes.  
         Alimentar personajes.  
@@ -380,7 +462,8 @@ public class Aldea {
         Eliminar animales muertos.  
         Mostrar resumen del ciclo
         */
-        //TODO 1 Acciones guardianes
+        //TODO  verificar personajes han completado sus acciones?
+        // Disparos de torres / personajes defensa
 
         //Ciclo principal de la simulación
         if (cicloActual <= MAX_CICLOS) {
@@ -388,16 +471,20 @@ public class Aldea {
             cicloActual++;
             ventana.agregarLog("\nCiclo Actual:" + cicloActual);
             ventana.actualizarRecursos();
-
+            setPersonajesListos(false);
             for (Personaje personaje : personajes){ //Los personajes realizan sus acciones y entonces cada uno determina su objetivo
                 if (personaje.estaVivo()) {
-                    //personaje.realizarAccion();
                     personaje.determinarObjetivo();
                     ventana.agregarLog(personaje.getNombre() + " se dirige a " + personaje.getObjetivo());
                     
                 }
             }
-            //Esperar a que todos los personajes hayan completado su accion
+            //TODO: Esperar a que todos los personajes hayan completado su accion
+            //Variable boolean personajesListos ?
+            //checkPersonajesListos();
+            //System.out.println("Los personajes han finalizado");
+
+
             //Actualizar parcelas cultivadas
             for (Parcela parcela : parcelasCultivo) {
                 parcela.cuidar();
@@ -406,7 +493,22 @@ public class Aldea {
             //Generar animales
             verificarCrearAnimal();
             //Disparos de torres o personajes de defensa
+            for (TorreDefensa torre : getTorres()){
+                if (!torre.isDestruida()){
+                    torre.determinarObjetivo();
+                    torre.realizarAtaque();
+                }
+            }
+
             //Ataque de animales sobrevivientes
+            for (Animal animal : animalesActivos){
+                if (animal.estaVivo()){
+                    animal.determinarObjetivo();
+                    animal.atacar();
+                }
+            }
+
+
 
             if(verificarCondicionesDerrota()) {
                 ventana.agregarLog("¡Derrota! La aldea ha caído.");
@@ -430,7 +532,7 @@ public class Aldea {
     }
 
     private boolean verificarCondicionesDerrota() {
-        //TODO Verificar condiciones de derrota al final de cada ciclo
+        //Verificar condiciones de derrota al final de cada ciclo
         if ((comidaVegetalDisponible + comidaAnimalDisponible) <= minComidaDerrota) {
             turnosSinComida++;
             ventana.agregarLog("¡Cuidado! La aldea no tiene comida disponible. Al llegar a  " + maxTurnosMinComida + " perderá la partida.\nTurnos sin comida: " + turnosSinComida);
@@ -510,6 +612,17 @@ public class Aldea {
         torres.add(nuevaTorre);
         ventana.crearLabelTorre(nuevaTorre);
         ventana.actualizarRecursos();
+    }
+
+    public void agregarAnimal(){
+        String[] tiposAnimal = {"lobo", "jabali", "oso"};
+        int indice = (int) (Math.random()*2.5);
+        Animal nuevoAnimal = crearAnimal(tiposAnimal[indice]);
+        ThreadMovimientoAnimal nuevoThread = new ThreadMovimientoAnimal(nuevoAnimal);
+        hilosMovimientoAnimal.add(nuevoThread);
+        getAnimalesActivos().add(nuevoAnimal);
+        getVentana().crearLabelAnimal(nuevoAnimal);
+        nuevoThread.start();
     }
         
 
@@ -610,6 +723,14 @@ public class Aldea {
 
     public void setLabelArboles(ArrayList<JLabel> labelArboles) {
         this.labelArboles = labelArboles;
+    }
+
+    public boolean isPersonajesListos() {
+        return personajesListos;
+    }
+
+    public void setPersonajesListos(boolean personajesListos) {
+        this.personajesListos = personajesListos;
     }
 
 

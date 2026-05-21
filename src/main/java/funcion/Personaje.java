@@ -24,6 +24,7 @@ public abstract class Personaje {
     private String accionActual; // Acción que el personaje está realizando actualmente
 
 
+
     // Métodos abstractos que deben implementar las clases concretas
     public abstract void mover(); //?
     public abstract void realizarAccion();  //Checkear condiciones y realizar acción según indicado
@@ -39,6 +40,7 @@ public abstract class Personaje {
         this.vivo = true;
         this.aldea = aldea;
         this.tipo = tipo;
+        this.accionActual = "";
     }
 
     public void recibirDaño(int daño){
@@ -46,6 +48,7 @@ public abstract class Personaje {
         if(salud <= 0){
             vivo = false;
             salud = 0;
+            aldea.eliminarPersonaje(this);
         }
     }
 

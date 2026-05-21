@@ -3,12 +3,10 @@ package funcion;
 public class Parcela extends Estructura {
     private String estado; // "vacía", "sembrada", "lista para cosechar"
     private int ciclosParaCosechar; // Número de ciclos necesarios para que la parcela esté lista para cosechar
-    private Aldea aldea; // Referencia a la aldea para interactuar con el agricultor
     
     
     public Parcela(String nombre, Aldea aldea) {
-        super(nombre, 50, 50);
-        this.aldea = aldea;
+        super(nombre, 50, 50, aldea);
         this.estado = "vacía";
         this.ciclosParaCosechar = 0;
     }
@@ -33,7 +31,7 @@ public class Parcela extends Estructura {
         if (estado.equals("lista para cosechar")) {
             estado = "vacía";
             ciclosParaCosechar = 0;
-            aldea.setComidaVegetalDisponible(aldea.getComidaVegetalDisponible() + 12);
+            getAldea().setComidaVegetalDisponible(getAldea().getComidaVegetalDisponible() + 12);
         }
     }
 

@@ -37,11 +37,8 @@ public class Cazador extends Personaje {
             // Probabilidad de spawnear animal
             if (Math.random() <= 0.2) { 
                 getAldea().getVentana().agregarLog("Se encontró un animal al patrullar");
-                String[] tiposAnimal = {"lobo", "jabalí", "oso"};
-                int indice = (int) (Math.random()*2.5);
-                Animal nuevoAnimal = getAldea().crearAnimal(tiposAnimal[indice]);
-                getAldea().getAnimalesActivos().add(nuevoAnimal);
-                getAldea().getVentana().crearLabelAnimal(nuevoAnimal);
+                getAldea().agregarAnimal();
+                
             }
              this.setEnergia(this.getEnergia() - 10); // Reduce energía por patrullar
             break;

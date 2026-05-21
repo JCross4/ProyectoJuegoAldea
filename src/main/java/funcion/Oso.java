@@ -3,15 +3,10 @@ package funcion;
 public class Oso extends Animal {
 
     
-    public Oso(String nombre) {
-        super(nombre, "Oso", 100, 25);
+    public Oso(String nombre, Aldea aldea) {
+        super(nombre, "Oso", 100, 25, aldea);
     }
 
-    @Override
-    public void atacar() {
-        // TODO realiza ataque específico y cambia animación a "atacando"
-        throw new UnsupportedOperationException("Unimplemented method 'atacar'");
-    }
 
 }
     

@@ -16,13 +16,15 @@ public abstract class Estructura {
     private int resistenciaMaxima;
     private boolean destruida;
     private javax.swing.JLabel labelGUI;
+    private Aldea aldea;
 
 
-    public Estructura(String nombre, int resistenciaActual, int resistenciaMaxima) {
+    public Estructura(String nombre, int resistenciaActual, int resistenciaMaxima, Aldea aldea) {
         this.nombre = nombre;
         this.resistenciaActual = resistenciaActual;
         this.resistenciaMaxima = resistenciaMaxima;
         this.destruida = false;
+        this.aldea = aldea;
     }
 
     // Métodos abstractos que deben implementar las clases concretas
@@ -86,6 +88,14 @@ public abstract class Estructura {
 
     public void setLabelGUI(javax.swing.JLabel labelGUI) {
         this.labelGUI = labelGUI;
+    }
+
+    public Aldea getAldea() {
+        return aldea;
+    }
+
+    public void setAldea(Aldea aldea) {
+        this.aldea = aldea;
     }
 
     

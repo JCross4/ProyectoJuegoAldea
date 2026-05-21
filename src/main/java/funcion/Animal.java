@@ -20,28 +20,78 @@ public abstract class Animal {
     private boolean vivo;
     private javax.swing.JLabel labelGUI;
     private Aldea aldea; // Referencia a la aldea para interactuar con otros personajes y el entorno
-    private Point objetivo = new Point(0,0); // Posición objetivo para moverse
-
+    private Point objetivo; // Posición objetivo para moverse
+    private TorreDefensa torreObjetivo;
+    private Personaje personajeObjetivo;
+    private String accionActual;
 
 
     
-    public Animal(String nombre, String tipo, int vida, int fuerzaAtaque) {
+    public Animal(String nombre, String tipo, int vida, int fuerzaAtaque, Aldea aldea) {
         this.nombre = nombre;
         this.tipo = tipo;
         this.vida = vida;
         this.fuerzaAtaque = fuerzaAtaque;
         this.vivo = true;
+        this.aldea = aldea;
+        this.accionActual = "";
     }
 
     // Métodos abstractos que deben implementar las clases concretas
-    public abstract void atacar();
+    public void atacar(){
+        switch (getAccionActual()) {
+            case "atacar cerca":
+                getAldea().getCercaPrincipal().recibirDaño(getFuerzaAtaque());
+                getAldea().getVentana().agregarLog("El animal " + this.getNombre() + " ataca la cerca principal");
+                break;
+            case "atacar torre":
+                if (torreObjetivo != null) {
+                    torreObjetivo.recibirDaño(getFuerzaAtaque());
+                }
+                getAldea().getVentana().agregarLog("El animal " + this.getNombre() + " ataca una torre de defensa");
+                break;
+            case "atacar personaje":
+                if (personajeObjetivo != null) {
+                    personajeObjetivo.recibirDaño(getFuerzaAtaque());
+                }
+                getAldea().getVentana().agregarLog("El animal " + this.getNombre() + " ataca un personaje");
+                break;
+            default:
+                break;
+        }
+    }
     
     public void recibirDaño(int daño){
         vida -= daño;
         if (vida <= 0) {
             vivo = false;
             vida = 0;
+            aldea.eliminarAnimal(this);
         }
+    }
+
+    public void determinarObjetivo(){
+/*Primero atacan la cerca si la cerca tiene resistencia mayor a 0.  
+2. Si la cerca ya está destruida, atacan torres vivas.  
+3. Si no hay cerca ni torres vivas, atacan personajes vivos. */
+    if (getAldea().getCercaPrincipal().getResistenciaActual() > 0) {
+        setTorreObjetivo(null);
+        setPersonajeObjetivo(null);
+        setAccionActual("atacar cerca");
+        setObjetivo(new Point(getAldea().getCercaPrincipal().getLabelGUI().getLocation().x + getAldea().getVentana().getLABEL_SIZE()*4, getAldea().getCercaPrincipal().getLabelGUI().getLocation().y + getAldea().getVentana().getLABEL_SIZE()*4));
+    } else if (getAldea().getTorres().size() > 0) {
+        TorreDefensa torreMenosVida = getAldea().obtenerTorreMenosVida();
+        setAccionActual("atacar torre");
+        setTorreObjetivo(torreMenosVida);
+        setPersonajeObjetivo(null);
+        setObjetivo(torreMenosVida.getLabelGUI().getLocation());
+    } else {
+        Personaje personajeMenosVida = getAldea().obtenerPersonajeMenosVida();
+        setAccionActual("atacar personaje");
+        setTorreObjetivo(null);
+        setPersonajeObjetivo(personajeMenosVida);
+        setObjetivo(personajeMenosVida.getLabelGUI().getLocation());
+    }
     }
 
     public boolean estaVivo(){
@@ -101,6 +151,38 @@ public abstract class Animal {
 
     public void setObjetivo(Point objetivo) {
         this.objetivo = objetivo;
+    }
+
+    public Aldea getAldea() {
+        return aldea;
+    }
+
+    public void setAldea(Aldea aldea) {
+        this.aldea = aldea;
+    }
+
+    public TorreDefensa getTorreObjetivo() {
+        return torreObjetivo;
+    }
+
+    public void setTorreObjetivo(TorreDefensa torreObjetivo) {
+        this.torreObjetivo = torreObjetivo;
+    }
+
+    public Personaje getPersonajeObjetivo() {
+        return personajeObjetivo;
+    }
+
+    public void setPersonajeObjetivo(Personaje personajeObjetivo) {
+        this.personajeObjetivo = personajeObjetivo;
+    }
+
+    public String getAccionActual() {
+        return accionActual;
+    }
+
+    public void setAccionActual(String accionActual) {
+        this.accionActual = accionActual;
     }
     
 

@@ -138,7 +138,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         nuevoLabel.setOpaque(true);
         nuevoLabel.setBounds(0, 0, LABEL_SIZE*4, LABEL_SIZE*4);
         nuevoLabel.setBorder(BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        
+        aldea.getCercaPrincipal().setLabelGUI(nuevoLabel);
     }
 
     public void crearLabelAnimal(Animal animal){
@@ -153,6 +153,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         nuevoLabel.setOpaque(true);
         nuevoLabel.setBounds(LABEL_SIZE * aldea.getAnimalesActivos().indexOf(animal), LABEL_SIZE * 5, LABEL_SIZE, LABEL_SIZE);
         nuevoLabel.setBorder(BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        animal.setObjetivo(nuevoLabel.getLocation());
     }
 
     public void crearLabelParcela(Parcela parcela){
@@ -194,6 +195,12 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     
     public void moverPersonaje(Personaje p, int x, int y){
         p.getLabelGUI().setLocation(x, y);
+        this.repaint();
+    }
+
+    public void moverAnimal(Animal animal, int x, int y){
+        animal.getLabelGUI().setLocation(x, y);
+        this.repaint();
     }
 
     public String obtenerPersonajeSeleccionado(){
