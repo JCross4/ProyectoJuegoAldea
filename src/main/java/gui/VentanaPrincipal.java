@@ -4,11 +4,18 @@
  */
 package gui;
 
+import java.awt.Font;
+import java.awt.Image;
 import java.awt.Point;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 
 import funcion.Aldea;
 import funcion.Animal;
@@ -64,6 +71,17 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     label.setText(texto);
    }
 
+   public void mostrarMensaje(boolean victoria){
+    if (victoria){
+        JOptionPane.showMessageDialog(this, "Victoria!");
+    }
+    else{
+        JOptionPane.showMessageDialog(this, "Derrota!", "Derrota", JOptionPane.ERROR_MESSAGE);
+    }
+    //this.dispose();
+    aldea.terminarSimulacion();
+   }
+
     public void crearLabelsIniciales(){
         
         for (Personaje p : aldea.getPersonajes()){
@@ -97,13 +115,23 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     }
 
     public void crearLabelPersonaje(Personaje personaje){
-        javax.swing.JLabel nuevoLabel = new javax.swing.JLabel();
+        ImageIcon icon = null;
+        try {
+            BufferedImage img = ImageIO.read(new File(personaje.getPathDefault()));
+            Image dimg = img.getScaledInstance(getLABEL_SIZE(), getLABEL_SIZE(), Image.SCALE_SMOOTH);
+            icon = new ImageIcon(dimg);
+        } catch (Exception e) {
+            System.out.println("Error cargando imagen");
+        }
+        javax.swing.JLabel nuevoLabel = new javax.swing.JLabel(icon);
         mainPanel.add(nuevoLabel);
         personaje.setLabelGUI(nuevoLabel);
         nuevoLabel.setBackground(new java.awt.Color(200, 200, 200));
-        nuevoLabel.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
+        nuevoLabel.setFont(new java.awt.Font("Segoe UI", Font.BOLD, 12)); // NOI18N
         nuevoLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        nuevoLabel.setText(personaje.getNombre());
+        nuevoLabel.setText(personaje.getNombre().substring(0, 2) + personaje.getNombre().substring(personaje.getNombre().length() - 1) );
+        nuevoLabel.setIconTextGap(-15);
+        nuevoLabel.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         nuevoLabel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         nuevoLabel.setOpaque(true);
         nuevoLabel.setBounds(LABEL_SIZE * aldea.getPersonajes().indexOf(personaje), 0, LABEL_SIZE, LABEL_SIZE);
@@ -111,16 +139,28 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         personaje.setObjetivo(personaje.getLabelGUI().getLocation());
         mainPanel.setComponentZOrder(nuevoLabel, 0);
     }
+    
+
 
     public void crearLabelTorre(TorreDefensa torre){
-        javax.swing.JLabel nuevoLabel = new javax.swing.JLabel();
+        ImageIcon icon = null;
+        try {
+            BufferedImage img = ImageIO.read(new File(torre.getPathDefault()));
+            Image dimg = img.getScaledInstance(getLABEL_SIZE(), getLABEL_SIZE(), Image.SCALE_SMOOTH);
+            icon = new ImageIcon(dimg);
+        } catch (Exception e) {
+            System.out.println("Error cargando imagen");
+        }
+        javax.swing.JLabel nuevoLabel = new javax.swing.JLabel(icon);
         mainPanel.add(nuevoLabel);
         torre.setLabelGUI(nuevoLabel);
-        nuevoLabel.setBackground(new java.awt.Color(150, 150, 150));
-        nuevoLabel.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
+        //nuevoLabel.setBackground(new java.awt.Color(150, 150, 150));
+        nuevoLabel.setFont(new java.awt.Font("Segoe UI", Font.BOLD, 12));
         nuevoLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        nuevoLabel.setText("Torre");
+        nuevoLabel.setText(torre.getNombre().substring(0, 2) + torre.getNombre().substring(torre.getNombre().length() - 1) + "     ");
         nuevoLabel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        nuevoLabel.setIconTextGap(-15);
+        nuevoLabel.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         nuevoLabel.setOpaque(true);
         nuevoLabel.setBounds(60*aldea.getTorres().indexOf(torre), LABEL_SIZE * 3, LABEL_SIZE, LABEL_SIZE);
         nuevoLabel.setBorder(BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -128,13 +168,23 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     }
     
     public void crearLabelCerca(){
-        javax.swing.JLabel nuevoLabel = new javax.swing.JLabel();
+        ImageIcon icon = null;
+        try {
+            BufferedImage img = ImageIO.read(new File(aldea.getCercaPrincipal().getPathDefault()));
+            Image dimg = img.getScaledInstance(getLABEL_SIZE() * 4, getLABEL_SIZE() * 4, Image.SCALE_SMOOTH);
+            icon = new ImageIcon(dimg);
+        } catch (Exception e) {
+            System.out.println("Error cargando imagen");
+        }
+        javax.swing.JLabel nuevoLabel = new javax.swing.JLabel(icon);
         mainPanel.add(nuevoLabel);
         nuevoLabel.setBackground(new java.awt.Color(200, 100, 0));
-        nuevoLabel.setFont(new java.awt.Font("Segoe UI", 0, 20)); // NOI18N
+        nuevoLabel.setFont(new java.awt.Font("Segoe UI", Font.BOLD, 12));
         nuevoLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         nuevoLabel.setText("Cerca");
         nuevoLabel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        nuevoLabel.setIconTextGap(-15);
+        nuevoLabel.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         nuevoLabel.setOpaque(true);
         nuevoLabel.setBounds(0, 0, LABEL_SIZE*4, LABEL_SIZE*4);
         nuevoLabel.setBorder(BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -142,46 +192,74 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     }
 
     public void crearLabelAnimal(Animal animal){
-        javax.swing.JLabel nuevoLabel = new javax.swing.JLabel();
+        ImageIcon icon = null;
+        try {
+            BufferedImage img = ImageIO.read(new File(animal.getPathDefault()));
+            Image dimg = img.getScaledInstance(getLABEL_SIZE(), getLABEL_SIZE(), Image.SCALE_SMOOTH);
+            icon = new ImageIcon(dimg);
+        } catch (Exception e) {
+            System.out.println("Error cargando imagen");
+        }
+        javax.swing.JLabel nuevoLabel = new javax.swing.JLabel(icon);
         mainPanel.add(nuevoLabel);
         animal.setLabelGUI(nuevoLabel);
-        nuevoLabel.setBackground(new java.awt.Color(100, 200, 100));
-        nuevoLabel.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
+        //nuevoLabel.setBackground(new java.awt.Color(100, 200, 100));
+        nuevoLabel.setFont(new java.awt.Font("Segoe UI", Font.BOLD, 12));
         nuevoLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        nuevoLabel.setText(animal.getNombre());
+        nuevoLabel.setText(animal.getNombre().substring(0, 2) + animal.getNombre().substring(animal.getNombre().length() - 1) );
         nuevoLabel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        nuevoLabel.setIconTextGap(-15);
+        nuevoLabel.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         nuevoLabel.setOpaque(true);
         nuevoLabel.setBounds(LABEL_SIZE * aldea.getAnimalesActivos().indexOf(animal), LABEL_SIZE * 5, LABEL_SIZE, LABEL_SIZE);
         nuevoLabel.setBorder(BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        mainPanel.setComponentZOrder(nuevoLabel, 0);
         animal.setObjetivo(nuevoLabel.getLocation());
     }
 
     public void crearLabelParcela(Parcela parcela){
-        javax.swing.JLabel nuevoLabel = new javax.swing.JLabel();
+        ImageIcon icon = null;
+        try {
+            BufferedImage img = ImageIO.read(new File(parcela.getPathDefault()));
+            Image dimg = img.getScaledInstance(getLABEL_SIZE(), getLABEL_SIZE(), Image.SCALE_SMOOTH);
+            icon = new ImageIcon(dimg);
+        } catch (Exception e) {
+            System.out.println("Error cargando imagen");
+        }
+        javax.swing.JLabel nuevoLabel = new javax.swing.JLabel(icon);
         mainPanel.add(nuevoLabel);
         parcela.setLabelGUI(nuevoLabel);
         nuevoLabel.setBackground(new java.awt.Color(100, 100, 200));
-        nuevoLabel.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
+        nuevoLabel.setFont(new java.awt.Font("Segoe UI", Font.BOLD, 12));
         nuevoLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         nuevoLabel.setText(parcela.getNombre().substring(0, 1) + parcela.getNombre().substring(parcela.getNombre().length() - 1) + " T: " + parcela.getCiclosParaCosechar());
         nuevoLabel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        nuevoLabel.setIconTextGap(-15);
+        nuevoLabel.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         nuevoLabel.setOpaque(true);
         nuevoLabel.setBounds(LABEL_SIZE * aldea.getParcelasCultivo().indexOf(parcela), LABEL_SIZE * 2, LABEL_SIZE, LABEL_SIZE);
         nuevoLabel.setBorder(BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
     }
 
     public javax.swing.JLabel crearLabelArbol(ArrayList<Point> posicionesArboles){
-        javax.swing.JLabel nuevoLabel = new javax.swing.JLabel();
-        mainPanel.add(nuevoLabel);
-        nuevoLabel.setBackground(new java.awt.Color(0, 255, 0));
-        nuevoLabel.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
-        nuevoLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        nuevoLabel.setText("Árbol");
-        nuevoLabel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        nuevoLabel.setOpaque(true);
+        ImageIcon icon = null;
+        try {
+            BufferedImage img = ImageIO.read(new File(aldea.getPathArbol()));
+            Image dimg = img.getScaledInstance(getLABEL_SIZE(), getLABEL_SIZE(), Image.SCALE_SMOOTH);
+            icon = new ImageIcon(dimg);
+        } catch (Exception e) {
+            System.out.println("Error cargando imagen");
+        }
+        
+        javax.swing.JLabel nuevoLabel = new javax.swing.JLabel(icon);
+
         Collections.shuffle(posicionesArboles);
         nuevoLabel.setBounds(LABEL_SIZE * posicionesArboles.getFirst().x, LABEL_SIZE * posicionesArboles.getFirst().y, LABEL_SIZE, LABEL_SIZE);
         nuevoLabel.setBorder(BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        
+        //nuevoLabel.setIcon(img);
+        mainPanel.add(nuevoLabel);
+        mainPanel.setComponentZOrder(nuevoLabel, 0);
         return nuevoLabel;
     }
 
@@ -205,12 +283,12 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
     public String obtenerPersonajeSeleccionado(){
         return ((String) comboBoxPersonaje.getSelectedItem());
-        //TODO lógica para obtener el personaje seleccionado a partir del nombre
     }
 
     public void agregarLog(String mensaje){
         jTextArea1.append(mensaje + "\n");
     }
+
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -252,18 +330,19 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         setForeground(new java.awt.Color(102, 102, 102));
         setResizable(false);
 
-        mainPanel.setBackground(new java.awt.Color(0, 0, 51));
+        mainPanel.setBackground(new java.awt.Color(51, 153, 0));
+        mainPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 3));
         mainPanel.setPreferredSize(new java.awt.Dimension(600, 600));
 
         javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
         mainPanel.setLayout(mainPanelLayout);
         mainPanelLayout.setHorizontalGroup(
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 896, Short.MAX_VALUE)
+            .addGap(0, 890, Short.MAX_VALUE)
         );
         mainPanelLayout.setVerticalGroup(
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 600, Short.MAX_VALUE)
+            .addGap(0, 594, Short.MAX_VALUE)
         );
 
         jTextArea1.setEditable(false);
@@ -598,9 +677,8 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(BtnAvanzarCiclo, javax.swing.GroupLayout.DEFAULT_SIZE, 29, Short.MAX_VALUE)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(BtnAgregarPersonaje, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(comboBoxPersonaje, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(BtnAgregarPersonaje, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(comboBoxPersonaje, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 

@@ -23,7 +23,7 @@ public class ThreadMovimiento extends Thread {
                 if (personaje.getLabelGUI().getLocation().equals(personaje.getObjetivo()) && !personaje.getObjetivo().equals(puntoOriginal) || personaje.getAccionActual().equals("descansar")) {
                     // El personaje ha llegado a su objetivo, puede realizar una acción o determinar un nuevo objetivo
                     personaje.realizarAccion();
-                    System.out.println(personaje.getNombre() + " ha llegado a su objetivo en (" + personaje.getObjetivo().x + ", " + personaje.getObjetivo().y + ")");
+                    //System.out.println(personaje.getNombre() + " ha llegado a su objetivo en (" + personaje.getObjetivo().x + ", " + personaje.getObjetivo().y + ")");
                     Thread.sleep(800); // Simula el tiempo que tarda en realizar la acción
                     //Volver a posición inicial
                     personaje.setAccionActual("ninguna");

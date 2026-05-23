@@ -22,16 +22,7 @@ public abstract class Personaje {
     private Aldea aldea; // Referencia a la aldea para interactuar con otros personajes y el entorno
     private Point objetivo; // Posición objetivo para moverse
     private String accionActual; // Acción que el personaje está realizando actualmente
-
-
-
-    // Métodos abstractos que deben implementar las clases concretas
-    public abstract void mover(); //?
-    public abstract void realizarAccion();  //Checkear condiciones y realizar acción según indicado
-    public abstract void comer();   //Recupera energía y reduce comida disponible
-    public abstract void descansar();   //Recupera energía y cambia animación a "descansando"
-    public abstract void determinarObjetivo();  //Determina el objetivo según su función (ej. torre más cercana, parcela de cultivo, etc.)
-
+    private String pathDefault; // Ruta de la imagen por defecto del personaje
 
     public Personaje(String nombre, String tipo, Aldea aldea) {
         this.nombre = nombre;
@@ -43,12 +34,50 @@ public abstract class Personaje {
         this.accionActual = "";
     }
 
+    // Métodos abstractos que deben implementar las clases concretas
+    public abstract void mover(); //?
+    public abstract void realizarAccion();  //Checkear condiciones y realizar acción según indicado
+    public abstract void determinarObjetivo();  //Determina el objetivo según su función (ej. torre más cercana, parcela de cultivo, etc.)
+    
+    public void descansar(){
+        this.setEnergia(Math.min(100, this.getEnergia() + 20)); // Recupera energía al descansar
+    }; 
+
+    public void comer(){//Recupera energía y reduce comida disponible
+        /*Cada personaje consume exactamente 2 unidades de comida por ciclo.  
+• La comida se consume en este orden:  
+1. alimento vegetal  
+2. carne  
+• Si no hay suficiente comida para un personaje:  
+o pierde 15 de salud  
+o pierde 10 de energía adicionales  
+• Si sí logra alimentarse:  
+o recupera 10 de energía  
+o sin superar 100  */
+        if (getAldea().getComidaAnimalDisponible() + getAldea().getComidaVegetalDisponible() >= 2){
+            if (getAldea().getComidaVegetalDisponible()>=2) {
+                getAldea().setComidaVegetalDisponible(getAldea().getComidaVegetalDisponible()-2);
+                }
+            else {
+                getAldea().setComidaAnimalDisponible(getAldea().getComidaAnimalDisponible()-(2 - getAldea().getComidaVegetalDisponible()));
+                getAldea().setComidaVegetalDisponible(0);
+            }
+            getAldea().getVentana().agregarLog("El personaje " + getNombre() + " se alimenta");
+            setEnergia(Math.min(100, this.getEnergia() + 10));
+        }
+        else{
+            getAldea().getVentana().agregarLog("El personaje " + getNombre() + " no puede alimentarse y recibe daño y pierde energía");
+            recibirDaño(15);
+            setEnergia(Math.max(0, this.getEnergia() - 10));
+        }
+
+    }   
+
     public void recibirDaño(int daño){
         salud -= daño;
         if(salud <= 0){
             vivo = false;
             salud = 0;
-            aldea.eliminarPersonaje(this);
         }
     }
 
@@ -119,6 +148,12 @@ public void setAccionActual(String accionActual) {
         return "Personaje [nombre=" + nombre + ", salud=" + salud + ", energia=" + energia + ", vivo=" + vivo
                 + ", tipo=" + tipo + "]";
     }
+public String getPathDefault() {
+    return pathDefault;
+}
+public void setPathDefault(String pathDefault) {
+    this.pathDefault = pathDefault;
+}
 
     
 }

@@ -7,6 +7,7 @@ public class TorreDefensa extends Estructura{
     public TorreDefensa(String nombre, Aldea aldea) {
         super(nombre, 60, 60, aldea);
         this.dañoAtaque = 15;
+        setPathDefault("src/Recursos/rpg-map-symbols-round-tower-clipart-xl.png");
     }
 
     public void realizarAtaque(){

@@ -17,6 +17,7 @@ public abstract class Estructura {
     private boolean destruida;
     private javax.swing.JLabel labelGUI;
     private Aldea aldea;
+    private String pathDefault; //Imagen del label
 
 
     public Estructura(String nombre, int resistenciaActual, int resistenciaMaxima, Aldea aldea) {
@@ -34,15 +35,17 @@ public abstract class Estructura {
         if(resistenciaActual <= 0){
             destruida = true;
             resistenciaActual = 0;
+            getAldea().getVentana().agregarLog(getNombre() + " ha sido destruida");
         }
     }
 
     public void reparar(int cantidad){
-        if(!destruida){
+        if(!destruida || this instanceof Cerca){
             resistenciaActual += cantidad;
             if(resistenciaActual > resistenciaMaxima){
                 resistenciaActual = resistenciaMaxima;
             }
+            getAldea().getVentana().agregarLog("Se repara " + getNombre() + " por " + cantidad + " puntos de resistencia");
         }
     }
     
@@ -96,6 +99,14 @@ public abstract class Estructura {
 
     public void setAldea(Aldea aldea) {
         this.aldea = aldea;
+    }
+
+    public String getPathDefault() {
+        return pathDefault;
+    }
+
+    public void setPathDefault(String pathDefault) {
+        this.pathDefault = pathDefault;
     }
 
     

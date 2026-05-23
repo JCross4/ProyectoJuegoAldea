@@ -6,6 +6,7 @@ public class Lobo extends Animal    {
     
     public Lobo(String nombre, Aldea aldea) {
         super(nombre, "Lobo", 40, 10, aldea);
+        setPathDefault("src/Recursos/pngtree-wolf-clipart-illustration-white-background-png-image_13686637.png");
     }
 
 

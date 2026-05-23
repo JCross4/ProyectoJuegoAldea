@@ -24,6 +24,7 @@ public abstract class Animal {
     private TorreDefensa torreObjetivo;
     private Personaje personajeObjetivo;
     private String accionActual;
+    private String pathDefault; //Ubicación de la imagen
 
 
     
@@ -47,6 +48,9 @@ public abstract class Animal {
             case "atacar torre":
                 if (torreObjetivo != null) {
                     torreObjetivo.recibirDaño(getFuerzaAtaque());
+                    if (torreObjetivo.isDestruida()){
+                        getAldea().eliminarTorre(torreObjetivo);
+                    }
                 }
                 getAldea().getVentana().agregarLog("El animal " + this.getNombre() + " ataca una torre de defensa");
                 break;
@@ -66,7 +70,6 @@ public abstract class Animal {
         if (vida <= 0) {
             vivo = false;
             vida = 0;
-            aldea.eliminarAnimal(this);
         }
     }
 
@@ -74,13 +77,14 @@ public abstract class Animal {
 /*Primero atacan la cerca si la cerca tiene resistencia mayor a 0.  
 2. Si la cerca ya está destruida, atacan torres vivas.  
 3. Si no hay cerca ni torres vivas, atacan personajes vivos. */
+    TorreDefensa torreMenosVida = getAldea().obtenerTorreMenosVida();
     if (getAldea().getCercaPrincipal().getResistenciaActual() > 0) {
         setTorreObjetivo(null);
         setPersonajeObjetivo(null);
         setAccionActual("atacar cerca");
         setObjetivo(new Point(getAldea().getCercaPrincipal().getLabelGUI().getLocation().x + getAldea().getVentana().getLABEL_SIZE()*4, getAldea().getCercaPrincipal().getLabelGUI().getLocation().y + getAldea().getVentana().getLABEL_SIZE()*4));
-    } else if (getAldea().getTorres().size() > 0) {
-        TorreDefensa torreMenosVida = getAldea().obtenerTorreMenosVida();
+    } else if (getAldea().getTorres().size() > 0 && torreMenosVida!=null) {
+        
         setAccionActual("atacar torre");
         setTorreObjetivo(torreMenosVida);
         setPersonajeObjetivo(null);
@@ -183,6 +187,14 @@ public abstract class Animal {
 
     public void setAccionActual(String accionActual) {
         this.accionActual = accionActual;
+    }
+
+    public String getPathDefault() {
+        return pathDefault;
+    }
+
+    public void setPathDefault(String pathDefault) {
+        this.pathDefault = pathDefault;
     }
     
 

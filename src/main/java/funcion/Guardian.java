@@ -9,6 +9,7 @@ public class Guardian extends Personaje {
     public Guardian(String nombre, Aldea aldea) {
         super(nombre,"guardian", aldea);
         dañoAtaque = 20;
+        setPathDefault("src/Recursos/5723525.png");
     }
 
     @Override
@@ -19,11 +20,10 @@ public class Guardian extends Personaje {
 
     @Override
     public void realizarAccion() {
-        // TODO realiza accion específica
-        //throw new UnsupportedOperationException("Unimplemented method 'realizarAccion'");
         /*Si hay animales activos, ataca al animal con mayor fuerza de ataque.  
 2. Si no hay animales activos, vigila la entrada.  
 3. Si no tiene energía suficiente, descansa */
+    getAldea().getVentana().agregarLog("El guardián " + getNombre() + " realiza la acción " + getAccionActual());
     switch (getAccionActual()) {
         case "atacar":
             if (animalObjetivo != null) {
@@ -36,29 +36,24 @@ public class Guardian extends Personaje {
             setEnergia(getEnergia()-5);
             break;
         case "descansar":
-            this.setEnergia(Math.min(100, this.getEnergia() + 30));
+            descansar();
             break;    
         default:
             break;
     }
     setAnimalObjetivo(null);
+    getAldea().getVentana().actualizarRecursos();
     }
 
-    @Override
-    public void comer() {
-        // TODO recupera energia y reduce comida disponible
-        throw new UnsupportedOperationException("Unimplemented method 'comer'");
-    }
 
     @Override
     public void descansar() {
         // TODO recupera energia y cambia animación a "descansando"
-        throw new UnsupportedOperationException("Unimplemented method 'descansar'");
+        this.setEnergia(Math.min(100, this.getEnergia() + 30));
     }
 
     @Override
     public void determinarObjetivo() {
-        // TODO Auto-generated method stub
         /*Si hay animales activos, ataca al animal con mayor fuerza de ataque.  
 2. Si no hay animales activos, vigila la entrada.  
 3. Si no tiene energía suficiente, descansa */
@@ -67,17 +62,19 @@ public class Guardian extends Personaje {
             animalObjetivo = this.getAldea().obtenerAnimalMasFuerte();
             this.setObjetivo(animalObjetivo.getLabelGUI().getLocation());
             this.setAccionActual("atacar");
+            getAldea().getVentana().agregarLog("Guardián " + this.getNombre() + " va a atacar al animal " + animalObjetivo.getNombre());
         }
         else if (this.getEnergia() >= 15) {
             // Objetivo: vigilar la entrada 
             setObjetivo(new Point(getAldea().getVentana().getLABEL_SIZE()*4, getAldea().getVentana().getLABEL_SIZE()*4));
-            
             this.setAccionActual("vigilar");
+            getAldea().getVentana().agregarLog("Guardián " + this.getNombre() + " va a vigilar");
         }
         else {
             // Objetivo: descansar
             this.setObjetivo(this.getLabelGUI().getLocation()); // Podría ser una posición específica para descansar
             this.setAccionActual("descansar");
+            getAldea().getVentana().agregarLog("Guardián " + this.getNombre() + " va a descansar");
         }
     }
 

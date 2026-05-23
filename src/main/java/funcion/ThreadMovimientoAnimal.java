@@ -23,7 +23,7 @@ public class ThreadMovimientoAnimal extends Thread{
                 if (animal.getLabelGUI().getLocation().equals(animal.getObjetivo()) && !animal.getObjetivo().equals(puntoOriginal)) {
                     // El personaje ha llegado a su objetivo, puede realizar una acción o determinar un nuevo objetivo
                     animal.atacar();
-                    System.out.println(animal.getNombre() + " ha llegado a su objetivo en (" + animal.getObjetivo().x + ", " + animal.getObjetivo().y + ")");
+                    //System.out.println(animal.getNombre() + " ha llegado a su objetivo en (" + animal.getObjetivo().x + ", " + animal.getObjetivo().y + ")");
                     Thread.sleep(800); // Simula el tiempo que tarda en realizar la acción
                     //Volver a posición inicial
                     animal.setAccionActual("ninguna");
@@ -31,20 +31,20 @@ public class ThreadMovimientoAnimal extends Thread{
                     turnoFinalizado = true;
                 }
                 else{
-                turnoFinalizado = false;
-                Thread.sleep(400); // Simula el tiempo entre movimientos
-                currentX = animal.getLabelGUI().getX();
-                currentY = animal.getLabelGUI().getY();
-                if (currentX < animal.getObjetivo().x) {
-                    currentX += animal.getAldea().getVentana().getLABEL_SIZE(); // Mueve a la derecha
-                } else if (currentX > animal.getObjetivo().x) {
-                    currentX -= animal.getAldea().getVentana().getLABEL_SIZE(); // Mueve a la izquierda
-                } else if (currentY < animal.getObjetivo().y) {
-                    currentY += animal.getAldea().getVentana().getLABEL_SIZE(); // Mueve hacia abajo
-                } else if (currentY > animal.getObjetivo().y) {
-                    currentY -= animal.getAldea().getVentana().getLABEL_SIZE(); // Mueve hacia arriba
-                }
-                animal.getAldea().getVentana().moverAnimal(animal, currentX, currentY); // El personaje se mueve hacia su objetivo
+                    turnoFinalizado = false;
+                    Thread.sleep(400); // Simula el tiempo entre movimientos
+                    currentX = animal.getLabelGUI().getX();
+                    currentY = animal.getLabelGUI().getY();
+                    if (currentX < animal.getObjetivo().x) {
+                        currentX += animal.getAldea().getVentana().getLABEL_SIZE(); // Mueve a la derecha
+                    } else if (currentX > animal.getObjetivo().x) {
+                        currentX -= animal.getAldea().getVentana().getLABEL_SIZE(); // Mueve a la izquierda
+                    } else if (currentY < animal.getObjetivo().y) {
+                        currentY += animal.getAldea().getVentana().getLABEL_SIZE(); // Mueve hacia abajo
+                    } else if (currentY > animal.getObjetivo().y) {
+                        currentY -= animal.getAldea().getVentana().getLABEL_SIZE(); // Mueve hacia arriba
+                    }
+                    animal.getAldea().getVentana().moverAnimal(animal, currentX, currentY); // El personaje se mueve hacia su objetivo
             }
             } catch (InterruptedException e) {
                 e.printStackTrace();

@@ -6,7 +6,7 @@ public class Agricultor extends Personaje {
 
     public Agricultor(String nombre, Aldea aldea) {
         super(nombre, "agricultor", aldea);
-        //TODO Auto-generated constructor stub
+        this.setPathDefault("src/Recursos/10444746.png");
     }
 
     @Override
@@ -17,8 +17,7 @@ public class Agricultor extends Personaje {
 
     @Override
     public void realizarAccion() {
-        // TODO realiza accion específica
-        //throw new UnsupportedOperationException("Unimplemented method 'realizarAccion'");
+        // realiza accion específica
         /*Si existe una parcela vacía, siembra una parcela.  
 2. Si existe una parcela sembrada lista para cosechar, cosecha.  
 3. Si todas las parcelas están ocupadas pero ninguna lista para cosechar, cuida cultivos.  
@@ -34,7 +33,8 @@ public class Agricultor extends Personaje {
             case "cosechar":
                 // Acción de cosechar
                 parcelaObjetivo.cosechar();
-                this.setEnergia(this.getEnergia() - 15); // Reduce energía por cose
+                this.setEnergia(this.getEnergia() - 15); // Reduce energía por cosechar
+                getAldea().getVentana().actualizarRecursos();
                 break;
             case "cuidar":
                 // Acción de cuidar
@@ -43,31 +43,20 @@ public class Agricultor extends Personaje {
                 break;
             case "descansar":
                 // Acción de descansar
-                this.setEnergia(Math.min(100, this.getEnergia() + 30)); // Recupera energía al descansar
+                descansar();
                 break;
             default:
                 break;
         }
         getAldea().actualizarLabelsParcelas();
+        getAldea().getVentana().actualizarRecursos();
         parcelaObjetivo = null;
 
     }
 
-    @Override
-    public void comer() {
-        // TODO recupera energia y reduce comida disponible
-        throw new UnsupportedOperationException("Unimplemented method 'comer'");
-    }
-
-    @Override
-    public void descansar() {
-        // TODO recupera energia y cambia animación a "descansando"
-        throw new UnsupportedOperationException("Unimplemented method 'descansar'");
-    }
 
     @Override
     public void determinarObjetivo() {
-        // TODO Auto-generated method stub
         /*Si existe una parcela vacía, siembra una parcela.  
 2. Si existe una parcela sembrada lista para cosechar, cosecha.  
 3. Si todas las parcelas están ocupadas pero ninguna lista para cosechar, cuida cultivos.  
@@ -93,22 +82,26 @@ public class Agricultor extends Personaje {
             this.setObjetivo(parcelaParaSembrar.getLabelGUI().getLocation());
             this.setAccionActual("sembrar");
             parcelaObjetivo = parcelaParaSembrar;
+            getAldea().getVentana().agregarLog("Agricultor " + this.getNombre() + " va a sembrar la parcela " + parcelaObjetivo.getNombre());
         }
         else if (parcelaParaCosechar != null && this.getEnergia() >= 15) {
             this.setObjetivo(parcelaParaCosechar.getLabelGUI().getLocation());
             this.setAccionActual("cosechar");
             parcelaObjetivo = parcelaParaCosechar;
+            getAldea().getVentana().agregarLog("Agricultor " + this.getNombre() + " va a cosechar la parcela " + parcelaObjetivo.getNombre());
         }
         else if (parcelaParaCuidar != null && this.getEnergia() >= 10) {
-            // Objetivo: cuidar cultivos (podría ser la parcela con más ciclos para cosechar o alguna otra lógica)
+            // Objetivo: cuidar cultivos
             this.setObjetivo(parcelaParaCuidar.getLabelGUI().getLocation());
             this.setAccionActual("cuidar");
             parcelaObjetivo = parcelaParaCuidar;
+            getAldea().getVentana().agregarLog("Agricultor " + this.getNombre() + " va a cuidar la parcela " + parcelaObjetivo.getNombre());
         }
         else {
             // Objetivo: descansar
-            this.setObjetivo(this.getLabelGUI().getLocation()); // Podría ser una posición específica para descansar
+            this.setObjetivo(this.getLabelGUI().getLocation()); 
             this.setAccionActual("descansar");
+            getAldea().getVentana().agregarLog("Agricultor " + this.getNombre() + " va a descansar");
         }
     }
 

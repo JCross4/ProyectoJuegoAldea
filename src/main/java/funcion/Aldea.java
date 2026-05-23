@@ -5,8 +5,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
-
 import javax.swing.JLabel;
 
 import java.awt.Point;
@@ -24,7 +22,7 @@ public class Aldea {
     final int CONSTRUCTORES_INICIALES = 1;
     final int GUARDIANES_INICIALES = 1;
     final int LEÑADORES_INICIALES = 1;
-    final int TORRES_INICIALES = 2;
+    final int TORRES_INICIALES = 1;
     final int PARCELAS_CULTIVO_INICIALES = 2;
     final int COMIDA_VEGETAL_INICIAL = 20;
     final int COMIDA_ANIMAL_INICIAL = 10;
@@ -42,11 +40,12 @@ public class Aldea {
     final int minTorresEnPieDerrota = 0; //0
     final int minComidaDerrota = 0; //0
     final int maxTurnosMinComida = 3; //3
+    final String pathArbol = "src/Recursos/How-to-draw-a-cartoon-tree-20.png";
 
     //Atributos de la aldea
     private boolean personajesListos;
     private int cicloActual;
-    private String nombre;
+    //private String nombre;
     private int maderaDisponible;
     private int comidaVegetalDisponible;
     private int comidaAnimalDisponible;
@@ -66,7 +65,7 @@ public class Aldea {
     
     public Aldea() {
         ventana = new VentanaPrincipal(this);
-        nombre = "Aldea";
+        //nombre = "Aldea";
         personajes = new ArrayList<Personaje>();
         torres = new ArrayList<TorreDefensa>();
         animalesActivos = new ArrayList<Animal>();
@@ -74,7 +73,7 @@ public class Aldea {
     }
 
     public Personaje crearPersonaje(String tipo) {
-        //TODO Implementar lógica para crear un nuevo personaje
+        //lógica para crear un nuevo personaje
         switch (tipo.toLowerCase()) {
             case "agricultor":
                 return new Agricultor("Agricultor" + (personajes.size() + 1), this);
@@ -92,22 +91,46 @@ public class Aldea {
     }
 
     public void eliminarPersonaje(Personaje personaje) {
-        //TODO Implementar lógica para eliminar un personaje de la aldea, por ejemplo, cuando muere o es eliminado por un animal
+        //lógica para eliminar un personaje de la aldea
         personajes.remove(personaje);
         ventana.eliminarLabel(personaje.getLabelGUI());
         detenerThreadMovimiento(personaje);
+        getVentana().agregarLog("Se eliminó el personaje " + personaje.getNombre());
+    }
+
+    public void eliminarTorre(TorreDefensa torre) {
+        //lógica para eliminar un personaje de la aldea
+        getTorres().remove(torre);
+        ventana.eliminarLabel(torre.getLabelGUI());
+        getVentana().agregarLog("Se eliminó la torre " + torre.getNombre());
     }
 
     public void eliminarArbol(JLabel labelArbol) {
-        //TODO Implementar lógica para eliminar un árbol de la aldea, por ejemplo, cuando es talado por un leñador
+        //lógica para eliminar un árbol de la aldea
         labelArboles.remove(labelArbol);
         ventana.eliminarLabel(labelArbol);
     }
 
-    public void eliminarAnimal(Animal animal){
-        animalesActivos.remove(animal);
-        ventana.eliminarLabel(animal.getLabelGUI());
-        detenerThreadMovimientoAnimal(animal);
+    public void eliminarPersonajesMuertos(){
+        for (Personaje personaje : personajes){
+            if (!personaje.estaVivo()){
+                ventana.agregarLog("El personaje " + personaje.getNombre() + " ha muerto");
+                ventana.eliminarLabel(personaje.getLabelGUI());
+                detenerThreadMovimiento(personaje);
+            }
+        }
+        personajes.removeIf(n -> !n.estaVivo());
+    }
+
+
+    public void eliminarAnimalesMuertos(){
+        for (Animal animal : animalesActivos){
+            if (!animal.estaVivo()){
+                ventana.eliminarLabel(animal.getLabelGUI());
+                detenerThreadMovimientoAnimal(animal);
+            }
+        }
+        animalesActivos.removeIf(n -> !n.estaVivo());
     }
 
     public void detenerThreadMovimiento(Personaje personaje) {
@@ -163,17 +186,17 @@ public class Aldea {
     }
 
     public TorreDefensa crearTorreDefensa() {
-        //TODO Implementar lógica para crear una nueva torre de defensa
+        // Crear una nueva torre de defensa
         return new TorreDefensa("Torre de Defensa" + (torres.size() + 1), this);
     }
 
     public Parcela crearParcelaCultivo() {
-        //TODO Implementar lógica para crear una nueva parcela de cultivo
+        //Crear una nueva parcela de cultivo
         return new Parcela("Parcela de Cultivo" + (parcelasCultivo.size() + 1), this);
     }
 
     public Animal crearAnimal(String tipo){
-        //TODO Implementar lógica para crear un nuevo animal (lobo, oso o jabalí) y agregarlo a la lista de animales activos
+        //Crear un nuevo animal (lobo, oso o jabalí)
         switch (tipo.toLowerCase()) {
             case "lobo":
                 return (new Lobo("Lobo" + (animalesActivos.size() + 1), this));
@@ -214,8 +237,8 @@ public class Aldea {
     }
 
     public Point obtenerTorreCercana(Point punto) {
-        //TODO Implementar lógica para determinar el objetivo del personaje según su tipo y la situación actual de la aldea
-        //Ejemplo: un agricultor podría dirigirse a una parcela de cultivo, un cazador a un animal activo, etc.
+        //Determinar el punto donde está la torre más cercana a un punto dado
+        
         int x = punto.x;
         int y = punto.y;
         int xObj = 9999;
@@ -246,8 +269,8 @@ public class Aldea {
     }
 
     public void obtenerPersonajeCercano(Animal animal){
-        //TODO Implementar lógica para determinar el objetivo del animal según la situación actual de la aldea
-        //Ejemplo: un lobo podría dirigirse al personaje más cercano, un oso a la torre de defensa más cercana, etc.
+        //Determinar el punto del personaje mas cercano y asignarlo al objetivo del animal
+        
         int x = animal.getLabelGUI().getLocation().x;
         int y = animal.getLabelGUI().getLocation().y;
         int xObj = 9999;
@@ -278,8 +301,8 @@ public class Aldea {
     }
 
     public Animal obtenerAnimalCercano(Point punto){
-        //TODO Implementar lógica para determinar el objetivo del personaje según su tipo y la situación actual de la aldea
-        //Ejemplo: un agricultor podría dirigirse a una parcela de cultivo, un cazador a un animal activo, etc.
+        //Determinar el animal más cercano a un punto dado
+        
         if (animalesActivos.size() == 0) {
             return null; // Podría ser una posición específica para descansar o alguna otra lógica
         }
@@ -303,8 +326,8 @@ public class Aldea {
     }
 
     public Animal obtenerAnimalMasFuerte(){
-        //TODO Implementar lógica para determinar el objetivo del personaje según su tipo y la situación actual de la aldea
-        //Ejemplo: un agricultor podría dirigirse a una parcela de cultivo, un cazador a un animal activo, etc.
+        //determinar el animal con más fuerza de ataque
+        
         if (animalesActivos.size() == 0) {
             return null; // Podría ser una posición específica para descansar o alguna otra lógica
         }
@@ -335,8 +358,8 @@ public class Aldea {
     }
 
     public Point obtenerArbolCercano(Lenador lenador){
-        //TODO Implementar lógica para determinar el objetivo del personaje según su tipo y la situación actual de la aldea
-        //Ejemplo: un agricultor podría dirigirse a una parcela de cultivo, un cazador a un animal activo, etc.
+        //Determinar el arbol más cercano al leñador
+        
         if (arbolesDisponibles == 0) {
             return null; // Podría ser una posición específica para descansar o alguna otra lógica
         }
@@ -361,9 +384,8 @@ public class Aldea {
     }
 
     public Point obtenerPuntoPatrulla(Point punto){
-        //TODO Implementar lógica para determinar el objetivo del personaje según su tipo y la situación actual de la aldea
-        //Ejemplo: un agricultor podría dirigirse a una parcela de cultivo, un cazador a un animal activo, etc.
-        //Podría ser una ruta predefinida o alguna otra lógica
+        //Determinar el punto al que el cazador debe patrullar
+        
         return new Point(ventana.getLABEL_SIZE() * 4, ventana.getLABEL_SIZE() * 7); // Ejemplo de punto de patrulla
     }
 
@@ -441,9 +463,17 @@ public class Aldea {
         iniciarThreadsMovimiento();
     }
 
+    public void terminarSimulacion(){
+        detenerThreadsMovimiento();
+        for (Animal animal : getAnimalesActivos()){
+            detenerThreadMovimientoAnimal(animal);
+        }
+        
+    }
+
     public void simularCiclo() {
         
-        //TODO Implementar lógica para simular un ciclo completo de la aldea, incluyendo las acciones de personajes, animales y estructuras, así como la verificación de condiciones de victoria y derrota
+        //Simular un ciclo completo de la aldea, incluyendo las acciones de personajes, animales y estructuras, así como la verificación de condiciones de victoria y derrota
         //Orden de acciones
         /*Personajes
         Constructores. - Agricultores. - Leñadores. - Cazadores. - Guardiánes
@@ -463,29 +493,39 @@ public class Aldea {
         Mostrar resumen del ciclo
         */
         //TODO  verificar personajes han completado sus acciones?
-        // Disparos de torres / personajes defensa
+        // Alimentar personajes.  Actualizar salud y energía.
 
         //Ciclo principal de la simulación
+        resumenCiclo();
+        cicloActual++;
         if (cicloActual <= MAX_CICLOS) {
-            //TODO Realizar acciones segun el orden determinado
-            cicloActual++;
+            //Realizar acciones segun el orden determinado
+            
+            eliminarAnimalesMuertos();
             ventana.agregarLog("\nCiclo Actual:" + cicloActual);
             ventana.actualizarRecursos();
-            setPersonajesListos(false);
+            //setPersonajesListos(false);
+            // Determinar objetivo para cada personaje y marcar sus hilos como "en acción"
+            ventana.agregarLog("Los personajes realizan sus acciones: ");
             for (Personaje personaje : personajes){ //Los personajes realizan sus acciones y entonces cada uno determina su objetivo
                 if (personaje.estaVivo()) {
                     personaje.determinarObjetivo();
-                    ventana.agregarLog(personaje.getNombre() + " se dirige a " + personaje.getObjetivo());
-                    
+                    //ventana.agregarLog(personaje.getNombre() + " se dirige a " + personaje.getObjetivo());
+                    // Marcar el hilo correspondiente como no finalizado para este turno
+                    /*for (ThreadMovimiento thread : hilosMovimiento) {
+                        if (thread.getPersonaje() == personaje) {
+                            thread.setTurnoFinalizado(false);
+                            break;
+                        }
+                    }*/
                 }
             }
-            //TODO: Esperar a que todos los personajes hayan completado su accion
-            //Variable boolean personajesListos ?
-            //checkPersonajesListos();
-            //System.out.println("Los personajes han finalizado");
+            // Esperar a que todos los hilos de movimiento completen su acción (con pausas cortas para no bloquear la CPU)
+            //esperarPersonajesFinalizarAccion();
 
 
             //Actualizar parcelas cultivadas
+            
             for (Parcela parcela : parcelasCultivo) {
                 parcela.cuidar();
             }
@@ -499,24 +539,40 @@ public class Aldea {
                     torre.realizarAtaque();
                 }
             }
-
             //Ataque de animales sobrevivientes
             for (Animal animal : animalesActivos){
                 if (animal.estaVivo()){
                     animal.determinarObjetivo();
-                    animal.atacar();
                 }
             }
 
+            //Alimentar personajes
+            for (Personaje personaje : personajes){
+                if (personaje.estaVivo()){
+                    personaje.comer();
+                }
+            }
 
+            eliminarAnimalesMuertos();
+            eliminarPersonajesMuertos();
 
             if(verificarCondicionesDerrota()) {
+                ventana.mostrarMensaje(false);
                 ventana.agregarLog("¡Derrota! La aldea ha caído.");
             }
+
+            getVentana().actualizarRecursos();
             
         }
-        else if (verificarCondicionesVictoria()) {
+        else {
+            if (verificarCondicionesVictoria()){
+            ventana.mostrarMensaje(true);
             ventana.agregarLog("¡Victoria! La aldea ha resistido.");
+            }
+            else {
+                ventana.mostrarMensaje(false);
+                ventana.agregarLog("Derrota! No ha cumplido con las condiciones para ganar");
+            }
         }
         if (verificarCondicionesAgregarPersonaje()) {
             ventana.habilitarAgregarPersonaje();
@@ -524,7 +580,7 @@ public class Aldea {
     }
 
     private boolean verificarCondicionesVictoria() {
-        //TODO Verificar condiciones de victoria al final del maximo de ciclos
+        //Verificar condiciones de victoria al final del maximo de ciclos
         return (personajes.size() >= minPersonajesVivosVictoria &&
                 cercaPrincipal.getResistenciaActual() >= minResistenciaCercaVictoria &&
                 (comidaVegetalDisponible + comidaAnimalDisponible) >= minComidaTotal &&
@@ -546,7 +602,7 @@ public class Aldea {
     }
 
     public boolean verificarCondicionesAgregarPersonaje(){
-        //TODO Verificar condiciones para agregar un nuevo personaje segun su tipo
+        //Verificar condiciones para agregar un nuevo personaje segun su tipo
         /*tiene al menos 30 unidades de alimento vegetal o carne combinadas,  
         tiene al menos 20 unidades de madera disponibles,  
         tiene al menos 1 torre viva,  
@@ -564,6 +620,7 @@ public class Aldea {
             if (tipo.equalsIgnoreCase("Automático"))
                 {
                     //Determinar el tipo de personaje a agregar según la cantidad de cada tipo de personaje vivo en la aldea
+                    
                     Map<String, Integer> counts = new HashMap<>();
                     for (Personaje personaje : personajes) {
                             if (personaje instanceof Agricultor) {
@@ -594,6 +651,7 @@ public class Aldea {
             ThreadMovimiento nuevoHilo = new ThreadMovimiento(nuevoPersonaje);
             hilosMovimiento.add(nuevoHilo);
             ventana.crearLabelPersonaje(nuevoPersonaje);
+            getVentana().agregarLog("Se agregó el personaje " + nuevoPersonaje.getNombre());
             maderaDisponible-=8;
             if (comidaVegetalDisponible>=10) {
                 comidaVegetalDisponible-=10;
@@ -612,12 +670,14 @@ public class Aldea {
         torres.add(nuevaTorre);
         ventana.crearLabelTorre(nuevaTorre);
         ventana.actualizarRecursos();
+        getVentana().agregarLog("Se construyó la torre " + nuevaTorre.getNombre());
     }
 
     public void agregarAnimal(){
         String[] tiposAnimal = {"lobo", "jabali", "oso"};
         int indice = (int) (Math.random()*2.5);
         Animal nuevoAnimal = crearAnimal(tiposAnimal[indice]);
+        getVentana().agregarLog("Se agregó un animal de tipo " + nuevoAnimal.getTipo());
         ThreadMovimientoAnimal nuevoThread = new ThreadMovimientoAnimal(nuevoAnimal);
         hilosMovimientoAnimal.add(nuevoThread);
         getAnimalesActivos().add(nuevoAnimal);
@@ -625,6 +685,43 @@ public class Aldea {
         nuevoThread.start();
     }
         
+    public void resumenCiclo(){
+/*cantidad de habitantes por tipo  
+• estado de cada personaje  
+• cantidad de animales vivos por tipo  
+• eventos importantes del ciclo */
+        String estadoPersonajes = "";
+        int cantConstructores = 0, cantAgricultores = 0, cantLenadores = 0, cantCazadores = 0, cantGuardianes = 0;
+        for (Personaje personaje : getPersonajes()){
+            if (personaje.estaVivo()){
+                switch (personaje.getTipo()) {
+                case "constructor":
+                    cantConstructores+=1;
+                    break;
+                case "agricultor":
+                    cantAgricultores+=1;
+                    break;
+                case "lenador":
+                    cantLenadores+=1;
+                    break;
+                case "cazador":
+                    cantCazadores+=1;
+                    break;
+                case "guardian":
+                    cantGuardianes+=1;
+                    break;
+                default:
+                    break;
+            }
+            }
+            estadoPersonajes = estadoPersonajes + (personaje.getNombre() + " Vida: " + personaje.getSalud() + " Energía: " + personaje.getEnergia() + "\n");
+        }
+        String personajesPorTipo = "Constructores: " + cantConstructores + " Agricultores: " + cantAgricultores + " Leñadores: " + cantLenadores + " Cazadores: " + cantCazadores + " Guardianes: " + cantGuardianes;
+        getVentana().agregarLog("\nResumen ciclo\n" + personajesPorTipo + "\n" + estadoPersonajes);
+
+
+    }
+
 
     public VentanaPrincipal getVentana() {
         return ventana;
@@ -732,6 +829,40 @@ public class Aldea {
     public void setPersonajesListos(boolean personajesListos) {
         this.personajesListos = personajesListos;
     }
+
+    public String getPathArbol() {
+        return pathArbol;
+    }
+
+    // Espera hasta que todos los hilos de movimiento hayan finalizado su turno
+    /*public void esperarPersonajesFinalizarAccion() {
+        boolean todosListos;
+        int waited = 0;
+        final int timeoutMs = 10000; // evita bloqueo infinito (10s)
+        final int sleepMs = 100; // pausa entre comprobaciones
+        do {
+            todosListos = true;
+            for (ThreadMovimiento thread : hilosMovimiento) {
+                Personaje p = thread.getPersonaje();
+                if (p != null && p.estaVivo() && !thread.isTurnoFinalizado()) {
+                    todosListos = false;
+                    break;
+                }
+            }
+            if (!todosListos) {
+                try {
+                    Thread.sleep(sleepMs);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    break;
+                }
+                waited += sleepMs;
+            }
+        } while (!todosListos && waited < timeoutMs);
+        setPersonajesListos(todosListos);
+    }*/
+
+    
 
 
 

@@ -8,6 +8,7 @@ public class Lenador extends Personaje {
 
     public Lenador(String nombre, Aldea aldea) {
         super(nombre,"lenador", aldea);
+        setPathDefault("src/Recursos/3611374.png");
         //TODO Auto-generated constructor stub
     }
 
@@ -19,32 +20,24 @@ public class Lenador extends Personaje {
 
     @Override
     public void realizarAccion() {
-        // TODO realiza accion específica
-        if (this.getAccionActual().equals("cortar") && this.getEnergia() >= 20) {
+        // Realiza accion específica
+        getAldea().getVentana().agregarLog("El leñador realiza la acción " + getAccionActual());
+        if (this.getAccionActual().equals("cortar") && this.getEnergia() >= 20 && getAldea().getArbolesDisponibles() != 0) {
             // Realiza acción de cortar árbol
             if (this.arbolObjetivo != null) {
+                getAldea().setMaderaDisponible(getAldea().getMaderaDisponible()+8);
                 this.getAldea().eliminarArbol(this.arbolObjetivo);
                 this.getAldea().setArbolesDisponibles(this.getAldea().getArbolesDisponibles() - 1);
+                getAldea().getVentana().actualizarRecursos();
                 this.setEnergia(this.getEnergia() - 20); // Reduce energía por cortar
             }
         }
         else if (this.getAccionActual().equals("descansar")) {
             // Realiza acción de descansar
-            this.setEnergia(Math.min(100, this.getEnergia() + 30)); // Recupera energía al descansar
+            descansar();
         }
         this.arbolObjetivo = null;
-    }
-
-    @Override
-    public void comer() {
-        // TODO recupera energia y reduce comida disponible
-        throw new UnsupportedOperationException("Unimplemented method 'comer'");
-    }
-
-    @Override
-    public void descansar() {
-        // TODO recupera energia y cambia animación a "descansando"
-        throw new UnsupportedOperationException("Unimplemented method 'descansar'");
+        getAldea().getVentana().actualizarRecursos();
     }
 
     @Override
@@ -56,11 +49,13 @@ public class Lenador extends Personaje {
             // Objetivo: cortar árbol (podría ser la posición del árbol más cercano o alguna otra lógica)
             this.setObjetivo(this.getAldea().obtenerArbolCercano(this));
             this.setAccionActual("cortar");
+            getAldea().getVentana().agregarLog("Leñador " + this.getNombre() + " va a cortar un árbol");
         }
         else {
             // Objetivo: descansar
             this.setObjetivo(this.getLabelGUI().getLocation()); // Podría ser una posición específica para descansar
             this.setAccionActual("descansar");
+            getAldea().getVentana().agregarLog("Leñador " + this.getNombre() + " va a descansar");
         }
     }
 

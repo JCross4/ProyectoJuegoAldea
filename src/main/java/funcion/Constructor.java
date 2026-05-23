@@ -7,7 +7,7 @@ public class Constructor extends Personaje {
 
     public Constructor(String nombre, Aldea aldea) {
         super(nombre,"constructor", aldea);
-        //TODO Auto-generated constructor stub
+        this.setPathDefault("src/Recursos/10365951.png");
     }
 
     @Override
@@ -18,7 +18,7 @@ public class Constructor extends Personaje {
 
     @Override
     public void realizarAccion() {
-        // TODO realiza accion específica
+        // Realiza accion específica
         /*1. Si la cerca tiene resistencia menor a 100 y hay al menos 5 unidades de madera, 
 repara la cerca.  
 2. Si la cerca está en 100 y existe alguna torre con resistencia menor a su máximo y 
@@ -26,7 +26,7 @@ hay al menos 4 unidades de madera, repara una torre.
 3. Si la cerca está en 100, todas las torres están al máximo y la aldea tiene menos de 3 
 torres, construye una nueva torre si hay al menos 20 unidades de madera.  
 4. Si ninguna condición anterior se cumple, descansa.  */
-        //throw new UnsupportedOperationException("Unimplemented method 'realizarAccion'");
+        getAldea().getVentana().agregarLog("El constructor realiza la acción " + getAccionActual());
         switch (getAccionActual()) {
             case "reparar cerca":
                 this.getAldea().getCercaPrincipal().reparar(15);
@@ -44,29 +44,17 @@ torres, construye una nueva torre si hay al menos 20 unidades de madera.
                 this.setEnergia(this.getEnergia() - 20); // Reduce energía por construir
                 break;
             case "descansar":
-                this.setEnergia(Math.min(100, this.getEnergia() + 30)); // Recupera energía al descansar
+                descansar();
                 break;
             default:
                 break;
         }
+        getAldea().getVentana().actualizarRecursos();
         torreObjetivo = null; // Reinicia torre objetivo después de realizar acción
     }
 
     @Override
-    public void comer() {
-        // TODO recupera energia y reduce comida disponible
-        throw new UnsupportedOperationException("Unimplemented method 'comer'");
-    }
-
-    @Override
-    public void descansar() {
-        // TODO recupera energia y cambia animación a "descansando"
-        throw new UnsupportedOperationException("Unimplemented method 'descansar'");
-    }
-
-    @Override
     public void determinarObjetivo() {
-        // TODO Auto-generated method stub
         /*1. Si la cerca tiene resistencia menor a 100 y hay al menos 5 unidades de madera, 
 repara la cerca.  
 2. Si la cerca está en 100 y existe alguna torre con resistencia menor a su máximo y 
